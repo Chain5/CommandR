@@ -2,28 +2,23 @@ package it.emgtech.commandr;
 
 import it.emgtech.commandr.tournament.model.entity.Tournament;
 import it.emgtech.commandr.tournament.model.entity.TournamentScoreBoard;
-import it.emgtech.commandr.tournament.model.request.SubscribeToTournamentRequest;
-import it.emgtech.commandr.tournament.model.response.TournamentScoreBoardResponse;
+import it.emgtech.commandr.tournament.model.SubscribeToTournamentRequest;
+import it.emgtech.commandr.tournament.model.TournamentScoreBoardResponse;
 import it.emgtech.commandr.tournament.service.ITournamentScoreBoardService;
 import it.emgtech.commandr.tournament.service.ITournamentService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import javax.inject.Inject;
 import java.util.List;
 
 @RestController
 @CrossOrigin
 @RequestMapping(value = "/tournament")
+@RequiredArgsConstructor
 public class TournamentApiDelegate {
 
     private final ITournamentService service;
     private final ITournamentScoreBoardService scoreBoardService;
-
-    @Inject
-    public TournamentApiDelegate(ITournamentService service, ITournamentScoreBoardService scoreBoardService) {
-        this.service = service;
-        this.scoreBoardService = scoreBoardService;
-    }
 
     @PostMapping(value = "/new")
     public Tournament saveNewTournament(@RequestBody Tournament tournament) {

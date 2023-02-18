@@ -1,6 +1,6 @@
 package it.emgtech.commandr.player.service;
 
-import it.emgtech.commandr.player.model.Player;
+import it.emgtech.commandr.player.model.entity.Player;
 
 import java.util.List;
 

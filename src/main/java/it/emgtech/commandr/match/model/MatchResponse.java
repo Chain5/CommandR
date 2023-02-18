@@ -1,4 +1,4 @@
-package it.emgtech.commandr.match.model.response;
+package it.emgtech.commandr.match.model;
 
 import lombok.Data;
 

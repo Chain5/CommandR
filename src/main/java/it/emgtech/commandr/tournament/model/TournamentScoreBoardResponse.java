@@ -1,8 +1,8 @@
-package it.emgtech.commandr.tournament.model.response;
+package it.emgtech.commandr.tournament.model;
 
 import it.emgtech.commandr.player.model.PlayerResponse;
-import lombok.Data;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 
 @Data
 @AllArgsConstructor

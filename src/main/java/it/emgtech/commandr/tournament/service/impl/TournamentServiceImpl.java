@@ -5,20 +5,15 @@ import it.emgtech.commandr.tournament.model.entity.Tournament;
 import it.emgtech.commandr.tournament.repository.ITournamentRepository;
 import it.emgtech.commandr.tournament.service.ITournamentService;
 import it.emgtech.commandr.util.MessageResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import javax.inject.Inject;
 import java.time.LocalDate;
 
 @Service
+@RequiredArgsConstructor
 public class TournamentServiceImpl implements ITournamentService {
 
     ITournamentRepository repository;
-
-    @Inject
-    public TournamentServiceImpl(ITournamentRepository repository) {
-        this.repository = repository;
-    }
 
     @Override
     public Tournament save(Tournament tournament) {

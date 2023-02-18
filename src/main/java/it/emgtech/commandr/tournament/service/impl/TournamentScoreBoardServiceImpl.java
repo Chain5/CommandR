@@ -1,36 +1,27 @@
 package it.emgtech.commandr.tournament.service.impl;
 
-import it.emgtech.commandr.player.model.Player;
+import it.emgtech.commandr.player.model.entity.Player;
 import it.emgtech.commandr.player.model.PlayerResponse;
 import it.emgtech.commandr.player.service.IPlayerService;
 import it.emgtech.commandr.tournament.model.entity.TournamentScoreBoard;
-import it.emgtech.commandr.tournament.model.request.SubscribeToTournamentRequest;
-import it.emgtech.commandr.tournament.model.response.TournamentScoreBoardResponse;
+import it.emgtech.commandr.tournament.model.SubscribeToTournamentRequest;
+import it.emgtech.commandr.tournament.model.TournamentScoreBoardResponse;
 import it.emgtech.commandr.tournament.repository.ITournamentScoreBoardRepository;
 import it.emgtech.commandr.tournament.service.ITournamentScoreBoardService;
 import it.emgtech.commandr.tournament.service.ITournamentService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class TournamentScoreBoardServiceImpl implements ITournamentScoreBoardService {
 
     private final ITournamentScoreBoardRepository repository;
     private final IPlayerService playerService;
     private final ITournamentService tournamentService;
-
-    @Inject
-    public TournamentScoreBoardServiceImpl(ITournamentScoreBoardRepository repository,
-                                           IPlayerService playerService,
-                                           ITournamentService tournamentService) {
-        this.repository = repository;
-        this.playerService = playerService;
-        this.tournamentService = tournamentService;
-    }
 
     @Override
     public TournamentScoreBoard subscribe(SubscribeToTournamentRequest request) {

@@ -1,25 +1,21 @@
 package it.emgtech.commandr.player.service.impl;
 
 import it.emgtech.commandr.exception.ApiRequestException;
-import it.emgtech.commandr.player.model.Player;
+import it.emgtech.commandr.player.model.entity.Player;
 import it.emgtech.commandr.player.repository.IPlayerRepository;
 import it.emgtech.commandr.player.service.IPlayerService;
 import it.emgtech.commandr.util.MessageResponse;
 import it.emgtech.commandr.util.PasswordUtility;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import javax.inject.Inject;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class PlayerServiceImpl implements IPlayerService {
 
-    private IPlayerRepository repository;
-
-    @Inject
-    public PlayerServiceImpl(IPlayerRepository repository) {
-        this.repository = repository;
-    }
+    private final IPlayerRepository repository;
 
     @Override
     public Player save(Player player) {
@@ -27,7 +23,7 @@ public class PlayerServiceImpl implements IPlayerService {
         player.setId(null);
 
         // verifying password validity
-        if(!PasswordUtility.checkPasswordValidity(player.getPassword()))
+        if (!PasswordUtility.checkPasswordValidity(player.getPassword()))
             throw new ApiRequestException(MessageResponse.PASSWORD_NOT_VALID);
 
         player.setPassword(PasswordUtility.getSecurePassword(player.getPassword()));

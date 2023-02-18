@@ -1,6 +1,12 @@
 package it.emgtech.commandr.match.service;
 
+import it.emgtech.commandr.match.model.entity.GameTable;
+
+import java.util.List;
+
 public interface IGameTableService {
 
-    void deleteGabeTableByTournamentId(Long tournamentId);
+    List<GameTable> saveGameTables(Long tournamentId, Integer numberOfTables);
+
+    List<GameTable> getGameTablesByTournamentId(Long tournamentId);
 }

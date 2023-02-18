@@ -1,4 +1,4 @@
-package it.emgtech.commandr.tournament.model.request;
+package it.emgtech.commandr.tournament.model;
 
 
 import lombok.AllArgsConstructor;
