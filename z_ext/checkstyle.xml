@@ -1,0 +1,49 @@
+<code_scheme name="checkstyle" version="173">
+  <option name="FORMATTER_TAGS_ENABLED" value="true" />
+  <GroovyCodeStyleSettings>
+    <option name="CLASS_COUNT_TO_USE_IMPORT_ON_DEMAND" value="99999" />
+    <option name="NAMES_COUNT_TO_USE_IMPORT_ON_DEMAND" value="999999" />
+  </GroovyCodeStyleSettings>
+  <JavaCodeStyleSettings>
+    <option name="CLASS_COUNT_TO_USE_IMPORT_ON_DEMAND" value="9999" />
+    <option name="NAMES_COUNT_TO_USE_IMPORT_ON_DEMAND" value="9999" />
+  </JavaCodeStyleSettings>
+  <XML>
+    <option name="XML_ATTRIBUTE_WRAP" value="0" />
+    <option name="XML_TEXT_WRAP" value="0" />
+  </XML>
+  <codeStyleSettings language="Groovy">
+    <option name="SPACE_WITHIN_PARENTHESES" value="true" />
+    <option name="SPACE_WITHIN_METHOD_CALL_PARENTHESES" value="true" />
+    <option name="SPACE_WITHIN_METHOD_PARENTHESES" value="true" />
+    <option name="SPACE_WITHIN_IF_PARENTHESES" value="true" />
+    <option name="SPACE_WITHIN_WHILE_PARENTHESES" value="true" />
+    <option name="SPACE_WITHIN_FOR_PARENTHESES" value="true" />
+    <option name="SPACE_WITHIN_CATCH_PARENTHESES" value="true" />
+    <option name="SPACE_WITHIN_SWITCH_PARENTHESES" value="true" />
+    <option name="SPACE_WITHIN_CAST_PARENTHESES" value="true" />
+    <option name="SPACE_WITHIN_ANNOTATION_PARENTHESES" value="true" />
+    <indentOptions>
+      <option name="SMART_TABS" value="true" />
+      <option name="LABEL_INDENT_SIZE" value="4" />
+    </indentOptions>
+  </codeStyleSettings>
+  <codeStyleSettings language="JAVA">
+    <option name="SPACE_WITHIN_PARENTHESES" value="true" />
+    <option name="SPACE_WITHIN_METHOD_CALL_PARENTHESES" value="true" />
+    <option name="SPACE_WITHIN_METHOD_PARENTHESES" value="true" />
+    <option name="SPACE_WITHIN_IF_PARENTHESES" value="true" />
+    <option name="SPACE_WITHIN_WHILE_PARENTHESES" value="true" />
+    <option name="SPACE_WITHIN_FOR_PARENTHESES" value="true" />
+    <option name="SPACE_WITHIN_TRY_PARENTHESES" value="true" />
+    <option name="SPACE_WITHIN_CATCH_PARENTHESES" value="true" />
+    <option name="SPACE_WITHIN_SWITCH_PARENTHESES" value="true" />
+    <option name="SPACE_WITHIN_CAST_PARENTHESES" value="true" />
+    <option name="SPACE_WITHIN_ARRAY_INITIALIZER_BRACES" value="true" />
+    <option name="SPACE_BEFORE_ANOTATION_PARAMETER_LIST" value="true" />
+    <option name="SPACE_WITHIN_ANNOTATION_PARENTHESES" value="true" />
+    <indentOptions>
+      <option name="SMART_TABS" value="true" />
+    </indentOptions>
+  </codeStyleSettings>
+</code_scheme>
