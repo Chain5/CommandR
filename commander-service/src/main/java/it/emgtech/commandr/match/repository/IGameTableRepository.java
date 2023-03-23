@@ -11,4 +11,6 @@ public interface IGameTableRepository extends JpaRepository<GameTable, Long> {
     List<GameTable> getGameTablesByTournamentId( Long tournamentId );
 
     GameTable save( GameTable gameTable );
+
+    GameTable findGameTableById( Long id );
 }

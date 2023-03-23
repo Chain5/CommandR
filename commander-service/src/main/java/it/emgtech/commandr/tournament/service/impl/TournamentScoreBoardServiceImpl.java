@@ -1,5 +1,6 @@
 package it.emgtech.commandr.tournament.service.impl;
 
+import it.emgtech.commandr.match.model.PlayerMatchDto;
 import it.emgtech.commandr.player.model.PlayerResponse;
 import it.emgtech.commandr.player.model.entity.Player;
 import it.emgtech.commandr.player.service.IPlayerService;
@@ -22,7 +23,6 @@ public class TournamentScoreBoardServiceImpl implements ITournamentScoreBoardSer
 
     private final ITournamentScoreBoardRepository repository;
     private final IPlayerService playerService;
-    private final ITournamentService tournamentService;
 
     @Override
     public TournamentScoreBoard subscribe( SubscribeToTournamentRequest request ) {
@@ -63,5 +63,17 @@ public class TournamentScoreBoardServiceImpl implements ITournamentScoreBoardSer
 
         return scoreBoards.stream().map( TournamentScoreBoard::getPlayerId ).collect( Collectors.toList() );
 
+    }
+
+    @Override
+    public int updateScoreBoard( Long tournamentId, List<PlayerMatchDto> playerMatchDto ) {
+        int updatedRecordCounter = 0;
+        for ( PlayerMatchDto player: playerMatchDto ) {
+            TournamentScoreBoard tournamentScoreBoard = repository.findByTournamentIdAndPlayerId( tournamentId, player.getPlayerId() );
+            tournamentScoreBoard.setPlayerTotalScore( tournamentScoreBoard.getPlayerTotalScore() + player.getScore() );
+            repository.save( tournamentScoreBoard );
+            updatedRecordCounter++;
+        }
+        return updatedRecordCounter;
     }
 }

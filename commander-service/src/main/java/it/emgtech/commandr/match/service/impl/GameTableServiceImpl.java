@@ -35,4 +35,16 @@ public class GameTableServiceImpl implements IGameTableService {
     public List<GameTable> getGameTablesByTournamentId( Long tournamentId ) {
         return repository.getGameTablesByTournamentId( tournamentId );
     }
+
+    @Override
+    public int resetGameTableForNewMatches( List<Long> gameTableIds ) {
+        int updatedRecordCounter = 0;
+        for ( Long gameTableId : gameTableIds ) {
+            GameTable gameTable = repository.findGameTableById( gameTableId );
+            gameTable.setFinished( false );
+            repository.save( gameTable );
+            updatedRecordCounter++;
+        }
+        return updatedRecordCounter;
+    }
 }

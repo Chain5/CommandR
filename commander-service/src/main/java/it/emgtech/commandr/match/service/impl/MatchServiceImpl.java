@@ -10,11 +10,13 @@ import it.emgtech.commandr.match.repository.IMatchRepository;
 import it.emgtech.commandr.match.service.IGameTableService;
 import it.emgtech.commandr.match.service.IMatchService;
 import it.emgtech.commandr.tournament.service.ITournamentScoreBoardService;
+import it.emgtech.commandr.util.JsonConverter;
 import it.emgtech.commandr.util.MessageResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -27,7 +29,7 @@ public class MatchServiceImpl implements IMatchService {
 
     private static final Integer MIN_PLAYER_FOR_TOURNAMENT = 4;
 
-    private final IMatchRepository matchRepository;
+    private final IMatchRepository repository;
     private final IGameTableService gameTableService;
     private final ITournamentScoreBoardService tournamentScoreBoardService;
     private final MatchTransformer transformer;
@@ -42,6 +44,20 @@ public class MatchServiceImpl implements IMatchService {
 
         // create and save new matches
         return generateMatches( tournamentId, tournamentPlayerIds, tournamentMatches );
+    }
+
+    @Override
+    public PlayerMatch updateOrInsertPlayerMatch( PlayerMatch playerMatch ) {
+        PlayerMatch playerMatchFound = repository.findByGameTableIdAndPlayerId( playerMatch.getGameTableId(), playerMatch.getPlayerId() );
+        if ( playerMatchFound != null ) {
+            mergeMetPlayers( playerMatchFound, playerMatch.getMetPlayers() );
+        } else {
+            playerMatchFound = playerMatch;
+            playerMatchFound.setId( null );
+        }
+        playerMatchFound.setScore( 0 );
+        playerMatchFound.setApprovedScore( false );
+        return repository.save( playerMatchFound );
     }
 
     private void commonChecks( List<Long> playerList, List<GameTable> remainingMatches ) {
@@ -95,16 +111,20 @@ public class MatchServiceImpl implements IMatchService {
                 playerMatch.setApprovedScore( false );
                 playerMatch.setPlayerId( currentMatchPlayer );
                 playerMatch.setGameTableId( createdGamesIds.get( gameIndex ) );
-
+                playerMatch.setMetPlayers( convertToString( currentMatchPlayers ) );
                 matchesToInsert.add( playerMatch );
             }
         }
 
-        MatchesResponse matchesResponse = transformer.transform( matchesToInsert, tournamentId );
+        savePlayerMatches( matchesToInsert );
 
-        matchRepository.saveAll( matchesToInsert );
+        return transformer.transform( matchesToInsert, tournamentId );
+    }
 
-        return matchesResponse;
+    private void savePlayerMatches( List<PlayerMatch> matchesToInsert ) {
+        for ( PlayerMatch player : matchesToInsert ) {
+            updateOrInsertPlayerMatch( player );
+        }
     }
 
     private Long[][] generateMatchesFromPlayerList( List<GameTable> gameTables ) {
@@ -126,13 +146,14 @@ public class MatchServiceImpl implements IMatchService {
             }
         }
 
-        //TODO: update playerMatch values
-
         return tables;
     }
 
     private Long[][] generateMatchesFromPreviousMatches( List<GameTable> gameTables ) {
+
         final List<PlayerMatchDto> playerMatch = retrievePlayerFromGameTable( gameTables );
+        updateTournamentScoreBoard( gameTables.get( 0 ).getTournamentId(), playerMatch );
+
         final int tableNumber = gameTables.size();
         Long[][] table = new Long[tableNumber][MIN_PLAYER_FOR_TOURNAMENT];
         Collections.shuffle( playerMatch );
@@ -144,7 +165,7 @@ public class MatchServiceImpl implements IMatchService {
             for ( PlayerMatchDto player : playerMatch ) {
                 List<PlayerMatchDto> playerIntoMatch = newMatches.get( tn );
                 if ( playerIntoMatch.stream().noneMatch( p -> p.hasMet( player.getPlayerId() ) ) ) {
-                    addPlayerAndUpdateMetList( newMatches.get( tn ), player );
+                    newMatches.get( tn ).add( player );
                     playerMatch.remove( player );
                 }
             }
@@ -156,23 +177,29 @@ public class MatchServiceImpl implements IMatchService {
             }
         }
 
-        // TODO: update GameTable isFinished field
+        gameTableService.resetGameTableForNewMatches( gameTables.stream().map( GameTable::getId ).collect( Collectors.toList() ) );
 
         return table;
     }
 
+    private void updateTournamentScoreBoard( Long tournamentId, List<PlayerMatchDto> player ) {
+        tournamentScoreBoardService.updateScoreBoard( tournamentId, player );
+    }
+
     private List<PlayerMatchDto> retrievePlayerFromGameTable( List<GameTable> gameTables ) {
         final List<Long> gameTablesIds = gameTables.stream().map( GameTable::getId ).collect( Collectors.toList() );
-        final List<PlayerMatch> tournamentPlayer = matchRepository.getMatchesByGameTableIdIn( gameTablesIds );
+        final List<PlayerMatch> tournamentPlayer = repository.getMatchesByGameTableIdIn( gameTablesIds );
         return tournamentPlayer.stream().map( PlayerMatchDto::new ).collect( Collectors.toList() );
     }
 
-    private void addPlayerAndUpdateMetList( List<PlayerMatchDto> list, PlayerMatchDto player ) {
-        for ( PlayerMatchDto playerInList : list ) {
-            playerInList.addPlayerToMetPlayerList( player.getPlayerId() );
-        }
-        //at the end, add the new player
-        list.add( player );
+    private void mergeMetPlayers( PlayerMatch playerToUpdate, String newMetPlayerList ) {
+        String mergedMetPlayers = JsonConverter.mergeStringMetPlayer( playerToUpdate.getMetPlayers(), newMetPlayerList );
+        playerToUpdate.setMetPlayers( mergedMetPlayers );
+    }
+
+    private String convertToString( Long[] existingPlayer ) {
+        List<Long> metPlayers = Arrays.asList( existingPlayer );
+        return JsonConverter.convertListLongIntoJsonString( metPlayers );
     }
 
 }

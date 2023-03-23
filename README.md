@@ -13,3 +13,10 @@ docker run --name commander-postgres -e POSTGRES_PASSWORD=YOUR_PASSWORD -d -p 54
 This will start postgresql database container on port 5432 in local environment with default username postgres.
 Remember to set YOUR_PASSWORD to the config file 'application.properties'
 
+# Work with me:
+If you would like to contribute to the project, feel free to create a branch and make your own changes.  
+Once finished, create the pull request to merge onto the master.
+I'll try to review it as soon as possible! :)  
+
+**For codestyle:** please use the checkstyle.xml in 'z_ext' folder.
+

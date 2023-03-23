@@ -12,4 +12,6 @@ public interface ITournamentScoreBoardRepository extends JpaRepository<Tournamen
     TournamentScoreBoard save( TournamentScoreBoard tournamentScoreBoard );
 
     List<TournamentScoreBoard> getTournamentScoreBoardsByTournamentIdOrderByPlayerTotalScoreDesc( Long tournamentId );
+
+    TournamentScoreBoard findByTournamentIdAndPlayerId( Long tournamentId, Long playerId );
 }

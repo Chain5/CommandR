@@ -5,6 +5,8 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import java.util.List;
+
 public class PlayerMatchDto extends PlayerMatch {
     JSONObject metPlayerJson;
 
@@ -24,6 +26,10 @@ public class PlayerMatchDto extends PlayerMatch {
 
     public boolean hasMet( Long playerId ) {
         return metPlayerJson.get( playerId ) != null && ( Integer ) metPlayerJson.get( playerId ) > 2;
+    }
+
+    public void addPlayersToMetPlayerList( List<Long> metPlayers) {
+        metPlayers.forEach( this::addPlayerToMetPlayerList );
     }
 
     public void addPlayerToMetPlayerList( Long metPlayerId ) {
