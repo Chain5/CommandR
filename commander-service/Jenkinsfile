@@ -1,4 +1,4 @@
-node('generic-jenkins-slave') {
+node {
     
     def pathToServicePom = 'mte-issuing-ecommerce/pom.xml'
     
