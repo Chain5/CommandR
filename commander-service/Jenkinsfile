@@ -1,11 +1,68 @@
 node {
-  stage('SCM') {
-    checkout scm
-  }
-  stage('SonarQube Analysis') {
-    def mvn = tool 'Default Maven';
-    withSonarQubeEnv() {
-      sh "${mvn}/bin/mvn clean verify sonar:sonar -Dsonar.projectKey=Sonar_CommandR"
+    
+    def pathToServicePom = 'commander-service/pom.xml'
+    
+    try {
+        stage("SCM") {
+            checkout scm
+        }
+        
+        stage("Service - Build") {
+            runCleanInstall(pathToServicePom)
+        }
+        
+        stage("Service - Unit tests") {
+            runUnitTests(pathToServicePom)
+        }
+        
+        stage("Service - Sonarqube Quality Check") {
+            runSonarqube(pathToServicePom)
+        }
+        
+    } catch (err) {
+        currentBuild.result = 'FAILURE'
+    } finally {
+        if (currentBuild.result == null) {
+            currentBuild.result = 'SUCCESS'
+        }
+        stage('Slack notification') {
+            println("RESULT: " + currentBuild.result);
+        }
     }
-  }
+}
+
+def runCleanInstall(pathToPom) {
+    timeout(time: 300, unit: 'SECONDS') {
+        withMaven {
+            if (isUnix()) {
+                sh "mvn -f ${pathToPom} clean install -B -U -DskipTests"
+            } else {
+                bat(/"mvn" -f ${pathToPom} clean install -B -U -DskipTests/)
+            }
+        }
+    }
+}
+
+def runUnitTests(pathToPom) {
+    timeout(time: 600, unit: 'SECONDS') {
+        withMaven {
+            if (isUnix()) {
+                sh "mvn -f ${pathToPom} test  -B -U -Dsurefire.useFile=true"
+            } else {
+                bat(/"mvn" -f ${pathToPom} test  -B -U -Dsurefire.useFile=true/)
+            }
+        }
+    }
+}
+
+def runSonarqube(pathToPom) {
+    timeout(time: 300, unit: 'SECONDS') {
+        withMaven {
+            if (isUnix()) {
+                sh "mvn -f  ${pathToPom} sonar:sonar"
+            } else {
+                bat(/"mvn" -f ${pathToPom} sonar:sonar/)
+            }
+        }
+    }
 }
