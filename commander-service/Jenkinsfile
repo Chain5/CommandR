@@ -1,6 +1,6 @@
 node {
     
-    def pathToServicePom = 'mte-issuing-ecommerce/pom.xml'
+    def pathToServicePom = 'commander-service/pom.xml'
     
     try {
         stage("SCM") {
