@@ -9,15 +9,11 @@ node {
         }
         
         stage("Service - Build") {
-            steps {
-                sh "${mvn}/bin/mvn -f ${pathToPom} clean install -B -U -DskipTests"
-            }
+            sh "${mvn}/bin/mvn -f ${pathToPom} clean install -B -U -DskipTests"
         }
         
         stage("Service - Unit tests") {
-            steps {
-                sh "${mvn}/bin/mvn -f ${pathToPom} test  -B -U -Dsurefire.useFile=true"
-            }
+            sh "${mvn}/bin/mvn -f ${pathToPom} test  -B -U -Dsurefire.useFile=true"
         }
         
         stage("Service - Sonarqube Quality Check") {
