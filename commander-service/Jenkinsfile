@@ -1,7 +1,7 @@
 node {
     
     def pathToServicePom = 'commander-service/pom.xml';
-    def mvn = tool 'Default Maven';
+    def mvn_version = 'Default Maven';
     
     try {
         stage("SCM") {
@@ -34,7 +34,7 @@ node {
 
 def runCleanInstall(pathToPom) {
     timeout(time: 300, unit: 'SECONDS') {
-        withMaven {
+        withEnv( [ "PATH+MAVEN=${tool mvn_version}/bin" ] ) {
             if (isUnix()) {
                 sh "${mvn}/bin/mvn -f ${pathToPom} clean install -B -U -DskipTests"
             } else {
@@ -46,7 +46,7 @@ def runCleanInstall(pathToPom) {
 
 def runUnitTests(pathToPom) {
     timeout(time: 600, unit: 'SECONDS') {
-        withMaven {
+        withEnv( [ "PATH+MAVEN=${tool mvn_version}/bin" ] ) {
             if (isUnix()) {
                 sh "${mvn}/bin/mvn -f ${pathToPom} test  -B -U -Dsurefire.useFile=true"
             } else {
