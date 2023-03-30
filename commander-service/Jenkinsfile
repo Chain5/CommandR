@@ -1,7 +1,7 @@
 node {
     
     def pathToServicePom = 'commander-service/pom.xml';
-    def mvn_version = 'Default Maven';
+    def mvn = tool 'Default Maven';
     
     try {
         stage("SCM") {
@@ -9,15 +9,21 @@ node {
         }
         
         stage("Service - Build") {
-            runCleanInstall(pathToServicePom)
+            steps {
+                sh "${mvn}/bin/mvn -f ${pathToPom} clean install -B -U -DskipTests"
+            }
         }
         
         stage("Service - Unit tests") {
-            runUnitTests(pathToServicePom)
+            steps {
+                sh "${mvn}/bin/mvn -f ${pathToPom} test  -B -U -Dsurefire.useFile=true"
+            }
         }
         
         stage("Service - Sonarqube Quality Check") {
-            runSonarqube(pathToServicePom)
+            withSonarQubeEnv() {
+                sh "${mvn}/bin/mvn clean verify sonar:sonar -Dsonar.projectKey=Sonar_CommandR"
+            }
         }
         
     } catch (err) {
@@ -28,38 +34,6 @@ node {
         }
         stage('Slack notification') {
             println("RESULT: " + currentBuild.result);
-        }
-    }
-}
-
-def runCleanInstall(pathToPom) {
-    timeout(time: 300, unit: 'SECONDS') {
-        withEnv( [ "PATH+MAVEN=${tool mvn_version}/bin" ] ) {
-            if (isUnix()) {
-                sh "${mvn}/bin/mvn -f ${pathToPom} clean install -B -U -DskipTests"
-            } else {
-                bat(/"mvn" -f ${pathToPom} clean install -B -U -DskipTests/)
-            }
-        }
-    }
-}
-
-def runUnitTests(pathToPom) {
-    timeout(time: 600, unit: 'SECONDS') {
-        withEnv( [ "PATH+MAVEN=${tool mvn_version}/bin" ] ) {
-            if (isUnix()) {
-                sh "${mvn}/bin/mvn -f ${pathToPom} test  -B -U -Dsurefire.useFile=true"
-            } else {
-                bat(/"mvn" -f ${pathToPom} test  -B -U -Dsurefire.useFile=true/)
-            }
-        }
-    }
-}
-
-def runSonarqube(pathToPom) {
-    timeout(time: 300, unit: 'SECONDS') {
-        withSonarQubeEnv() {
-            sh "${mvn}/bin/mvn clean verify sonar:sonar -Dsonar.projectKey=Sonar_CommandR"
         }
     }
 }
