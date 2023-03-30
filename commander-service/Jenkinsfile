@@ -38,7 +38,7 @@ def runCleanInstall(pathToPom) {
             if (isUnix()) {
                 sh "${mvn}/bin/mvn -f ${pathToPom} clean install -B -U -DskipTests"
             } else {
-                bat(/"${mvn}/bin/mvn" -f ${pathToPom} clean install -B -U -DskipTests/)
+                bat(/"mvn" -f ${pathToPom} clean install -B -U -DskipTests/)
             }
         }
     }
@@ -50,7 +50,7 @@ def runUnitTests(pathToPom) {
             if (isUnix()) {
                 sh "${mvn}/bin/mvn -f ${pathToPom} test  -B -U -Dsurefire.useFile=true"
             } else {
-                bat(/"${mvn}/bin/mvn" -f ${pathToPom} test  -B -U -Dsurefire.useFile=true/)
+                bat(/"mvn" -f ${pathToPom} test  -B -U -Dsurefire.useFile=true/)
             }
         }
     }
