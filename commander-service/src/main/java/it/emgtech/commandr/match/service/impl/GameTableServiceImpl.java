@@ -19,11 +19,10 @@ public class GameTableServiceImpl implements IGameTableService {
     public List<GameTable> saveGameTables( Long tournamentId, Integer numberOfTables ) {
         List<GameTable> savedGameTables = new ArrayList<>();
 
-        GameTable newGameTable = new GameTable();
-        newGameTable.setTournamentId( tournamentId );
-        newGameTable.setFinished( false );
-
         for ( int i = 0; i < numberOfTables; i++ ) {
+            GameTable newGameTable = new GameTable();
+            newGameTable.setTournamentId( tournamentId );
+            newGameTable.setFinished( false );
             newGameTable.setTableNumber( i + 1 );
             savedGameTables.add( repository.save( newGameTable ) );
         }

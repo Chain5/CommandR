@@ -1,5 +1,6 @@
 package it.emgtech.commandr;
 
+import it.emgtech.commandr.tournament.model.ScoreBoardRequest;
 import it.emgtech.commandr.tournament.model.SubscribeToTournamentRequest;
 import it.emgtech.commandr.tournament.model.TournamentScoreBoardResponse;
 import it.emgtech.commandr.tournament.model.entity.Tournament;
@@ -26,8 +27,8 @@ public class TournamentApiDelegate {
     private final ITournamentScoreBoardService scoreBoardService;
 
     @PostMapping ( value = "/new" )
-    public Tournament saveNewTournament( @RequestBody Tournament tournament ) {
-        return service.save( tournament );
+    public Tournament saveNewTournament( @RequestBody Tournament request ) {
+        return service.save( request );
     }
 
     @PostMapping ( value = "/subscribe" )
@@ -36,7 +37,7 @@ public class TournamentApiDelegate {
     }
 
     @GetMapping ( value = "/getScoreBoard" )
-    public List<TournamentScoreBoardResponse> getScoreBoard( @RequestBody Long tournamentId ) {
-        return scoreBoardService.getScoreBoard( tournamentId );
+    public List<TournamentScoreBoardResponse> getScoreBoard( @RequestBody ScoreBoardRequest request ) {
+        return scoreBoardService.getScoreBoard( request );
     }
 }

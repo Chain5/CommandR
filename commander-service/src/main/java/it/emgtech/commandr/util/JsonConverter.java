@@ -15,7 +15,7 @@ public class JsonConverter {
         String suffix = "";
         for ( Long id : list ) {
             sb.append( suffix );
-            sb.append( '"' + id + '"' ).append( ": 1" );
+            sb.append( "\"" + id + "\"" ).append( ": 1" );
             suffix = ",";
         }
         sb.append( "}" );

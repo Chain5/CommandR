@@ -1,6 +1,7 @@
 package it.emgtech.commandr.player.service.impl;
 
 import it.emgtech.commandr.exception.ApiRequestException;
+import it.emgtech.commandr.player.model.GetPlayerRequest;
 import it.emgtech.commandr.player.model.entity.Player;
 import it.emgtech.commandr.player.repository.IPlayerRepository;
 import it.emgtech.commandr.player.service.IPlayerService;
@@ -29,6 +30,11 @@ public class PlayerServiceImpl implements IPlayerService {
         player.setPassword( PasswordUtility.getSecurePassword( player.getPassword() ) );
         //TODO: continue with checks
         return repository.save( player );
+    }
+
+    @Override
+    public Player getPlayerById( GetPlayerRequest request ) {
+        return repository.findById( request.getPlayerId() ).orElse( null );
     }
 
     @Override

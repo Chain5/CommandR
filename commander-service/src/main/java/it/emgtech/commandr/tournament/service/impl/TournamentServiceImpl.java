@@ -14,7 +14,7 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 public class TournamentServiceImpl implements ITournamentService {
 
-    ITournamentRepository repository;
+    private final ITournamentRepository repository;
 
     @Override
     public Tournament save( Tournament tournament ) {

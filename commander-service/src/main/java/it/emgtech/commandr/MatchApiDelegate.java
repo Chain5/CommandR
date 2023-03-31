@@ -1,5 +1,6 @@
 package it.emgtech.commandr;
 
+import it.emgtech.commandr.match.model.GenerateMatchRequest;
 import it.emgtech.commandr.match.model.MatchesResponse;
 import it.emgtech.commandr.match.service.IGameTableService;
 import it.emgtech.commandr.match.service.IMatchService;
@@ -17,10 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class MatchApiDelegate {
 
     private final IMatchService matchService;
-    private final IGameTableService gameTableService;
 
     @PostMapping ( value = "/generate" )
-    public MatchesResponse generateMatches( @RequestBody Long tournamentId ) {
-        return matchService.generateMatches( tournamentId );
+    public MatchesResponse generateMatches( @RequestBody GenerateMatchRequest request ) {
+        return matchService.generateMatches( request );
     }
+
+    //TODO: implement getMatches & getMatchById
 }

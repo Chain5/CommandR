@@ -4,7 +4,6 @@ import lombok.Data;
 
 @Data
 public class PlayerMatchResponse {
-    private Long id;
     private String nickname;
     private String firstName;
     private String lastName;

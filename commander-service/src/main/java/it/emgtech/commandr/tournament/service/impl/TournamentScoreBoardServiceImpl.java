@@ -4,6 +4,7 @@ import it.emgtech.commandr.match.model.PlayerMatchDto;
 import it.emgtech.commandr.player.model.PlayerResponse;
 import it.emgtech.commandr.player.model.entity.Player;
 import it.emgtech.commandr.player.service.IPlayerService;
+import it.emgtech.commandr.tournament.model.ScoreBoardRequest;
 import it.emgtech.commandr.tournament.model.SubscribeToTournamentRequest;
 import it.emgtech.commandr.tournament.model.TournamentScoreBoardResponse;
 import it.emgtech.commandr.tournament.model.entity.TournamentScoreBoard;
@@ -34,11 +35,11 @@ public class TournamentScoreBoardServiceImpl implements ITournamentScoreBoardSer
     }
 
     @Override
-    public List<TournamentScoreBoardResponse> getScoreBoard( Long tournamentId ) {
+    public List<TournamentScoreBoardResponse> getScoreBoard( ScoreBoardRequest request ) {
         List<TournamentScoreBoardResponse> scoreBoardResponses = new ArrayList<>();
 
         List<TournamentScoreBoard> scoreBoard =
-                repository.getTournamentScoreBoardsByTournamentIdOrderByPlayerTotalScoreDesc( tournamentId );
+                repository.getTournamentScoreBoardsByTournamentIdOrderByPlayerTotalScoreDesc( request.getTournamentId() );
 
         List<Player> playerList = playerService.getPlayersByIds(
                 scoreBoard.stream().map( TournamentScoreBoard::getPlayerId ).collect( Collectors.toList() ) );
