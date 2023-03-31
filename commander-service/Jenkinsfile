@@ -62,9 +62,13 @@ def runUnitTests(pathToPom) {
 
 def runSonarqube(pathToPom) {
     timeout(time: 300, unit: 'SECONDS') {
-        def scannerHome = tool 'SonarQube';
-        withSonarQubeEnv('SonarQube') {
-            sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=Sonar_CommandR"
+        withMaven(maven: 'maven-3.3.9',
+                mavenOpts: '-Xmx512m -XX:MaxPermSize=1024m'
+        ) {
+            def scannerHome = tool 'SonarQube';
+            withSonarQubeEnv('SonarQube') {
+                sh "mvn -f ${pathToPom} clean verify ${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=Sonar_CommandR"
+            }
         }
     }
 }
