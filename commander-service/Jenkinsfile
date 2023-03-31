@@ -62,14 +62,8 @@ def runUnitTests(pathToPom) {
 
 def runSonarqube(pathToPom) {
     timeout(time: 300, unit: 'SECONDS') {
-        withMaven(maven: 'maven-3.3.9',
-                mavenOpts: '-Xmx512m -XX:MaxPermSize=1024m'
-        ) {
-            if (isUnix()) {
-                sh "mvn -f ${pathToPom} clean verify sonar:sonar -Dsonar.projectKey=Sonar_CommandR"
-            } else {
-                bat(/"mvn" -f ${pathToPom} sonar:sonar/)
-            }
+        withSonarQubeEnv() {
+            sh "mvn -f ${pathToPom} clean verify sonar:sonar -Dsonar.projectKey=Sonar_CommandR"
         }
     }
 }
