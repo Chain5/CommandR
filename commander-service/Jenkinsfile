@@ -67,7 +67,7 @@ def runSonarqube(pathToPom) {
         ) {
             def scannerHome = tool 'SonarQube';
             withSonarQubeEnv('SonarQube') {
-                sh "mvn -f ${pathToPom} clean verify ${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=Sonar_CommandR"
+                sh "mvn -f ${pathToPom} clean verify sonar:sonar -Dsonar.projectKey=Sonar_CommandR"
             }
         }
     }
