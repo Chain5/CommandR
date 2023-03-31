@@ -65,7 +65,6 @@ def runSonarqube(pathToPom) {
         withMaven(maven: 'maven-3.3.9',
                 mavenOpts: '-Xmx512m -XX:MaxPermSize=1024m'
         ) {
-            def scannerHome = tool 'SonarQube';
             withSonarQubeEnv('SonarQube') {
                 sh "mvn -f ${pathToPom} clean verify sonar:sonar -Dsonar.projectKey=Sonar_CommandR"
             }
