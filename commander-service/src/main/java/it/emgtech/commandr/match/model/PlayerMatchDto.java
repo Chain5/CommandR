@@ -5,9 +5,11 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import java.util.List;
+import java.util.Optional;
 
 public class PlayerMatchDto extends PlayerMatch {
+    private static final int MAX_ENCOUNTER = 2;
+
     JSONObject metPlayerJson;
 
     public PlayerMatchDto( PlayerMatch playerMatch ) {
@@ -25,20 +27,12 @@ public class PlayerMatchDto extends PlayerMatch {
     }
 
     public boolean hasMet( Long playerId ) {
-        return metPlayerJson.get( playerId ) != null && ( Integer ) metPlayerJson.get( playerId ) > 2;
-    }
-
-    public void addPlayersToMetPlayerList( List<Long> metPlayers) {
-        metPlayers.forEach( this::addPlayerToMetPlayerList );
-    }
-
-    public void addPlayerToMetPlayerList( Long metPlayerId ) {
-        Integer counter = 1;
-        if ( this.metPlayerJson.get( metPlayerId ) != null ) {
-            counter = ( Integer ) metPlayerJson.get( metPlayerId );
-            counter++;
+        String jsonKey = playerId.toString();
+        if ( metPlayerJson.get( jsonKey ) != null ) {
+            Optional<Object> encounterOpt = Optional.ofNullable( metPlayerJson.get( jsonKey ) );
+            return encounterOpt.filter( o -> Integer.parseInt( o.toString() ) >= MAX_ENCOUNTER ).isPresent();
+        } else {
+            return false;
         }
-        metPlayerJson.put( metPlayerId, counter );
     }
-
 }
