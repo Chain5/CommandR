@@ -18,5 +18,6 @@ If you would like to contribute to the project, feel free to create a branch and
 Once finished, create the pull request to merge onto the master.
 I'll try to review it as soon as possible! :)  
 
-**For codestyle:** please use the checkstyle.xml in 'z_ext' folder.
+**For codestyle:** please use the checkstyle.xml in 'z_ext' folder.  
+**Postman collection** you can find a ready-made postman collection to test it in local in the commander-service/external-files/postman-collection directory.
 
