@@ -1,13 +1,15 @@
 package it.emgtech.commandr;
 
+import it.emgtech.commandr.tournament.model.NewTournamentRequest;
+import it.emgtech.commandr.tournament.model.NewTournamentResponse;
 import it.emgtech.commandr.tournament.model.ScoreBoardRequest;
 import it.emgtech.commandr.tournament.model.SubscribeToTournamentRequest;
+import it.emgtech.commandr.tournament.model.SubscribeToTournamentResponse;
 import it.emgtech.commandr.tournament.model.TournamentScoreBoardResponse;
-import it.emgtech.commandr.tournament.model.entity.Tournament;
-import it.emgtech.commandr.tournament.model.entity.TournamentScoreBoard;
 import it.emgtech.commandr.tournament.service.ITournamentScoreBoardService;
 import it.emgtech.commandr.tournament.service.ITournamentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,17 +29,17 @@ public class TournamentApiDelegate {
     private final ITournamentScoreBoardService scoreBoardService;
 
     @PostMapping ( value = "/new" )
-    public Tournament saveNewTournament( @RequestBody Tournament request ) {
-        return service.save( request );
+    public ResponseEntity<NewTournamentResponse> saveNewTournament( @RequestBody NewTournamentRequest request ) {
+        return ResponseEntity.ok( service.save( request ) );
     }
 
     @PostMapping ( value = "/subscribe" )
-    public TournamentScoreBoard subscribeToTournament( @RequestBody SubscribeToTournamentRequest request ) {
-        return scoreBoardService.subscribe( request );
+    public ResponseEntity<SubscribeToTournamentResponse> subscribeToTournament( @RequestBody SubscribeToTournamentRequest request ) {
+        return ResponseEntity.ok( scoreBoardService.subscribe( request ) );
     }
 
     @GetMapping ( value = "/getScoreBoard" )
-    public List<TournamentScoreBoardResponse> getScoreBoard( @RequestBody ScoreBoardRequest request ) {
-        return scoreBoardService.getScoreBoard( request );
+    public ResponseEntity<List<TournamentScoreBoardResponse>> getScoreBoard( @RequestBody ScoreBoardRequest request ) {
+        return ResponseEntity.ok( scoreBoardService.getScoreBoard( request ) );
     }
 }

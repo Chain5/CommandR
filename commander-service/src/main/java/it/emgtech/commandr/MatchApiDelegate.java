@@ -2,9 +2,9 @@ package it.emgtech.commandr;
 
 import it.emgtech.commandr.match.model.GenerateMatchRequest;
 import it.emgtech.commandr.match.model.MatchesResponse;
-import it.emgtech.commandr.match.service.IGameTableService;
 import it.emgtech.commandr.match.service.IMatchService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,8 +20,8 @@ public class MatchApiDelegate {
     private final IMatchService matchService;
 
     @PostMapping ( value = "/generate" )
-    public MatchesResponse generateMatches( @RequestBody GenerateMatchRequest request ) {
-        return matchService.generateMatches( request );
+    public ResponseEntity<MatchesResponse> generateMatches( @RequestBody GenerateMatchRequest request ) {
+        return ResponseEntity.ok( matchService.generateMatches( request ) );
     }
 
     //TODO: implement getMatches & getMatchById

@@ -42,11 +42,7 @@ public class PasswordUtility {
     public static boolean checkPassword( String passwordIn, String passwordHashed ) {
         // encrypting user password with SHA-512
         final String passwordInHashed = getSecurePassword( passwordIn );
-
-        if ( passwordInHashed.equals( passwordHashed ) )
-            return true;
-
-        return false;
+        return passwordInHashed != null && passwordInHashed.equals( passwordHashed );
     }
 
     /**

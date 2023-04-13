@@ -6,11 +6,12 @@ import it.emgtech.commandr.player.model.entity.Player;
 import it.emgtech.commandr.player.service.IPlayerService;
 import it.emgtech.commandr.tournament.model.ScoreBoardRequest;
 import it.emgtech.commandr.tournament.model.SubscribeToTournamentRequest;
+import it.emgtech.commandr.tournament.model.SubscribeToTournamentResponse;
 import it.emgtech.commandr.tournament.model.TournamentScoreBoardResponse;
 import it.emgtech.commandr.tournament.model.entity.TournamentScoreBoard;
 import it.emgtech.commandr.tournament.repository.ITournamentScoreBoardRepository;
 import it.emgtech.commandr.tournament.service.ITournamentScoreBoardService;
-import it.emgtech.commandr.tournament.service.ITournamentService;
+import it.emgtech.commandr.util.Mapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,16 +23,19 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class TournamentScoreBoardServiceImpl implements ITournamentScoreBoardService {
 
+    private final Mapper mapper;
     private final ITournamentScoreBoardRepository repository;
     private final IPlayerService playerService;
 
     @Override
-    public TournamentScoreBoard subscribe( SubscribeToTournamentRequest request ) {
-        return repository.save( new TournamentScoreBoard(
+    public SubscribeToTournamentResponse subscribe( SubscribeToTournamentRequest request ) {
+        final TournamentScoreBoard tournamentScoreBoard = new TournamentScoreBoard(
                 null,
                 request.getTournamentId(),
                 request.getPlayerId(),
-                0 ) );
+                0
+        );
+        return mapper.map( repository.save( tournamentScoreBoard ), SubscribeToTournamentResponse.class );
     }
 
     @Override
@@ -69,7 +73,7 @@ public class TournamentScoreBoardServiceImpl implements ITournamentScoreBoardSer
     @Override
     public int updateScoreBoard( Long tournamentId, List<PlayerMatchDto> playerMatchDto ) {
         int updatedRecordCounter = 0;
-        for ( PlayerMatchDto player: playerMatchDto ) {
+        for ( PlayerMatchDto player : playerMatchDto ) {
             TournamentScoreBoard tournamentScoreBoard = repository.findByTournamentIdAndPlayerId( tournamentId, player.getPlayerId() );
             tournamentScoreBoard.setPlayerTotalScore( tournamentScoreBoard.getPlayerTotalScore() + player.getScore() );
             repository.save( tournamentScoreBoard );

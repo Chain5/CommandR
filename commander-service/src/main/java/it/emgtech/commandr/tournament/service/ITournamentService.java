@@ -1,7 +1,8 @@
 package it.emgtech.commandr.tournament.service;
 
-import it.emgtech.commandr.tournament.model.entity.Tournament;
+import it.emgtech.commandr.tournament.model.NewTournamentRequest;
+import it.emgtech.commandr.tournament.model.NewTournamentResponse;
 
 public interface ITournamentService {
-    Tournament save( Tournament tournament );
+    NewTournamentResponse save( NewTournamentRequest tournament );
 }

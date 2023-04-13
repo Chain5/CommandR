@@ -1,9 +1,12 @@
 package it.emgtech.commandr;
 
+import it.emgtech.commandr.player.GetPlayerResponse;
 import it.emgtech.commandr.player.model.GetPlayerRequest;
-import it.emgtech.commandr.player.model.entity.Player;
+import it.emgtech.commandr.player.model.SavePlayerRequest;
+import it.emgtech.commandr.player.model.SavePlayerResponse;
 import it.emgtech.commandr.player.service.IPlayerService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,13 +22,13 @@ public class PlayerApiDelegate {
     private final IPlayerService service;
 
     @PostMapping ( value = "/new" )
-    public Player saveNewPlayer( @RequestBody Player player ) {
-        return service.save( player );
+    public ResponseEntity<SavePlayerResponse> saveNewPlayer( @RequestBody SavePlayerRequest player ) {
+        return ResponseEntity.ok( service.save( player ) );
     }
 
     @PostMapping ( value = "/get" )
-    public Player getPlayer( @RequestBody GetPlayerRequest request ) {
-        return service.getPlayerById( request );
+    public ResponseEntity<GetPlayerResponse> getPlayer( @RequestBody GetPlayerRequest request ) {
+        return ResponseEntity.ok( service.getPlayerById( request ) );
     }
 
     //TODO: delete player
