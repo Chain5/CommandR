@@ -138,7 +138,7 @@ public class MatchServiceImpl implements IMatchService {
     private Long[][] generateMatchesFromPlayerList( List<Long> playerIds ) {
         Collections.shuffle( playerIds );
         final int playerNumber = playerIds.size();
-        int numberOfTables = playerNumber / MIN_PLAYER_FOR_TOURNAMENT; //TODO: verificare meglio il numero di tavoli
+        int numberOfTables = playerNumber / MIN_PLAYER_FOR_TOURNAMENT; //TODO: better verify the number of tables
         Long[][] tables = new Long[numberOfTables][MIN_PLAYER_FOR_TOURNAMENT];
 
         int k = 0;
@@ -170,7 +170,6 @@ public class MatchServiceImpl implements IMatchService {
         for ( int tableNumber = 0; tableNumber < numberOfTables; tableNumber++ ) {
             newMatches.put( tableNumber, new ArrayList<>() );
             playerMatch.removeAll( playerToRemove );
-            //TODO: problem.
             for ( PlayerMatchDto player : playerMatch ) {
                 List<PlayerMatchDto> playerIntoMatch = newMatches.get( tableNumber );
                 if ( playerIntoMatch.size() == MIN_PLAYER_FOR_TOURNAMENT ) {
