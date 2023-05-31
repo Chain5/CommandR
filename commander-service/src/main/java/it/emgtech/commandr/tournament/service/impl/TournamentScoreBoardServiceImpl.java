@@ -8,7 +8,9 @@ import it.emgtech.commandr.tournament.model.ScoreBoardRequest;
 import it.emgtech.commandr.tournament.model.SubscribeToTournamentRequest;
 import it.emgtech.commandr.tournament.model.SubscribeToTournamentResponse;
 import it.emgtech.commandr.tournament.model.TournamentScoreBoardResponse;
+import it.emgtech.commandr.tournament.model.entity.Tournament;
 import it.emgtech.commandr.tournament.model.entity.TournamentScoreBoard;
+import it.emgtech.commandr.tournament.repository.ITournamentRepository;
 import it.emgtech.commandr.tournament.repository.ITournamentScoreBoardRepository;
 import it.emgtech.commandr.tournament.service.ITournamentScoreBoardService;
 import it.emgtech.commandr.util.Mapper;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,6 +28,7 @@ public class TournamentScoreBoardServiceImpl implements ITournamentScoreBoardSer
 
     private final Mapper mapper;
     private final ITournamentScoreBoardRepository repository;
+    private final ITournamentRepository tournamentRepository;
     private final IPlayerService playerService;
 
     @Override
@@ -42,8 +46,14 @@ public class TournamentScoreBoardServiceImpl implements ITournamentScoreBoardSer
     public List<TournamentScoreBoardResponse> getScoreBoard( ScoreBoardRequest request ) {
         List<TournamentScoreBoardResponse> scoreBoardResponses = new ArrayList<>();
 
+        Optional<Tournament> tournamentOpt = tournamentRepository.findById( request.getTournamentId() );
+
+        if(!tournamentOpt.isPresent()) {
+            return new ArrayList<>();
+        }
+
         List<TournamentScoreBoard> scoreBoard =
-                repository.getTournamentScoreBoardsByTournamentIdOrderByPlayerTotalScoreDesc( request.getTournamentId() );
+                tournamentOpt.get().getTournamentScoreBoards();
 
         List<Player> playerList = playerService.getPlayersByIds(
                 scoreBoard.stream().map( TournamentScoreBoard::getPlayerId ).collect( Collectors.toList() ) );
