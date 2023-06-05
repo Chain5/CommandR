@@ -5,4 +5,6 @@ import it.emgtech.commandr.tournament.model.NewTournamentResponse;
 
 public interface ITournamentService {
     NewTournamentResponse save( NewTournamentRequest tournament );
+
+    int increaseGeneratedMatchCounter( Long tournamentId );
 }

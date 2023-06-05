@@ -27,7 +27,7 @@ public class PlayerMatch {
     @JoinColumn ( name = "playerId", insertable = false, updatable = false )
     private Player player;
 
-    @ManyToOne ( targetEntity = Player.class, fetch = FetchType.EAGER )
+    @ManyToOne ( targetEntity = GameTable.class, fetch = FetchType.EAGER )
     @JoinColumn ( name = "gameTableId", insertable = false, updatable = false )
     private GameTable gameTable;
 }

@@ -14,10 +14,11 @@ CREATE TABLE player
 -- Tournament Table
 CREATE TABLE tournament
 (
-    id              SERIAL PRIMARY KEY,
-    tournament_name VARCHAR(100) NOT NULL,
-    start_date      DATE,
-    end_date        DATE,
+    id                      SERIAL PRIMARY KEY,
+    tournament_name         VARCHAR(100) NOT NULL,
+    start_date              DATE,
+    end_date                DATE,
+    generated_match_counter INTEGER NOT NULL DEFAULT 0,
     CONSTRAINT tournament_unique UNIQUE (tournament_name)
 );
 
