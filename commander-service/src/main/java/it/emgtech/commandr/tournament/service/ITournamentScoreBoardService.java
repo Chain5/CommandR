@@ -5,6 +5,8 @@ import it.emgtech.commandr.tournament.model.ScoreBoardRequest;
 import it.emgtech.commandr.tournament.model.SubscribeToTournamentRequest;
 import it.emgtech.commandr.tournament.model.SubscribeToTournamentResponse;
 import it.emgtech.commandr.tournament.model.TournamentScoreBoardResponse;
+import it.emgtech.commandr.tournament.model.UpdateScoreBoardRequest;
+import it.emgtech.commandr.tournament.model.UpdateScoreBoardResponse;
 import it.emgtech.commandr.tournament.model.entity.TournamentScoreBoard;
 
 import java.util.List;
@@ -15,6 +17,8 @@ public interface ITournamentScoreBoardService {
     List<TournamentScoreBoardResponse> getScoreBoard( ScoreBoardRequest request );
 
     List<Long> getPlayersByTournamentId( Long tournamentId );
+
+    UpdateScoreBoardResponse updateScoreBoard( UpdateScoreBoardRequest tournamentId );
 
     int updateScoreBoard ( Long tournamentId, List<PlayerMatchDto> playerMatchDto );
 }

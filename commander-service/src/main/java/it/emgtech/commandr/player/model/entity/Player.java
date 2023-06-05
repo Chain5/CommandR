@@ -1,6 +1,5 @@
 package it.emgtech.commandr.player.model.entity;
 
-import it.emgtech.commandr.match.model.entity.GameTable;
 import it.emgtech.commandr.match.model.entity.PlayerMatch;
 import it.emgtech.commandr.tournament.model.entity.TournamentScoreBoard;
 import lombok.Data;

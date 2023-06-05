@@ -8,7 +8,7 @@ import it.emgtech.commandr.match.model.entity.PlayerMatch;
 public interface IMatchService {
     MatchesResponse generateMatches( GenerateMatchRequest request );
 
-    PlayerMatch updateOrInsertPlayerMatch( PlayerMatch playerMatch );
+    PlayerMatch updateOrInsertPlayerMatch( PlayerMatch playerMatch, Long tournamentId );
 
     MatchesResponse getMatches( GetMatchRequest request );
 }

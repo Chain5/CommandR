@@ -48,4 +48,9 @@ public class TournamentServiceImpl implements ITournamentService {
         repository.save( tournament );
         return 1;
     }
+
+    @Override
+    public Tournament findTournamentById( Long tournamentId ) {
+        return repository.findById( tournamentId ).orElse( null );
+    }
 }

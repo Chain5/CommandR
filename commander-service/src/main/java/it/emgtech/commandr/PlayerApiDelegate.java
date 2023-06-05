@@ -1,7 +1,9 @@
 package it.emgtech.commandr;
 
-import it.emgtech.commandr.player.GetPlayerResponse;
+import it.emgtech.commandr.player.model.GetPlayerResponse;
 import it.emgtech.commandr.player.model.GetPlayerRequest;
+import it.emgtech.commandr.player.model.ModifyPlayerRequest;
+import it.emgtech.commandr.player.model.ModifyPlayerResponse;
 import it.emgtech.commandr.player.model.SavePlayerRequest;
 import it.emgtech.commandr.player.model.SavePlayerResponse;
 import it.emgtech.commandr.player.service.IPlayerService;
@@ -29,6 +31,11 @@ public class PlayerApiDelegate {
     @PostMapping ( value = "/get" )
     public ResponseEntity<GetPlayerResponse> getPlayer( @RequestBody GetPlayerRequest request ) {
         return ResponseEntity.ok( service.getPlayerById( request ) );
+    }
+
+    @PostMapping( value = "/modify" )
+    public ResponseEntity<ModifyPlayerResponse> modifyPlayer ( @RequestBody ModifyPlayerRequest request ) {
+        return ResponseEntity.ok( service.modifyPlayer( request ) );
     }
 
     //TODO: delete player

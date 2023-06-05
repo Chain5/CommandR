@@ -12,5 +12,5 @@ public interface IMatchRepository extends JpaRepository<PlayerMatch, Long> {
 
     PlayerMatch save( PlayerMatch tournamentScoreBoard );
 
-    PlayerMatch findByPlayerId( Long playerId );
+    List<PlayerMatch> findByPlayerId( Long playerId );
 }

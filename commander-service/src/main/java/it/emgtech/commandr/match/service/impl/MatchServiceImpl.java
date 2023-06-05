@@ -59,8 +59,10 @@ public class MatchServiceImpl implements IMatchService {
     }
 
     @Override
-    public PlayerMatch updateOrInsertPlayerMatch( PlayerMatch playerMatch ) {
-        PlayerMatch playerMatchFound = repository.findByPlayerId( playerMatch.getPlayerId() );
+    public PlayerMatch updateOrInsertPlayerMatch( PlayerMatch playerMatch, Long tournamentId ) {
+        List<PlayerMatch> playerMatchList = repository.findByPlayerId( playerMatch.getPlayerId() );
+        PlayerMatch playerMatchFound = playerMatchList.stream().filter( el -> el.getGameTable().getTournamentId().equals( tournamentId ) ).findFirst().orElse( null );
+
         if ( playerMatchFound != null ) {
             mergeMetPlayers( playerMatchFound, playerMatch.getMetPlayers() );
         } else {
@@ -96,7 +98,7 @@ public class MatchServiceImpl implements IMatchService {
         int numberOfTable = remainingMatches.size();
         if ( numberOfTable > 0 ) {
             int generatedMatchCounter = remainingMatches.get( 0 ).getTournament().getGeneratedMatchCounter();
-            if ( generatedMatchCounter > MAX_MATCH_GENERATION || generatedMatchCounter > remainingMatches.size() ) {
+            if ( generatedMatchCounter >= MAX_MATCH_GENERATION || generatedMatchCounter >= remainingMatches.size() ) {
                 throw new ApiRequestException( MessageResponse.MAX_MATCH_GENERATION_REACHED );
             }
         }
@@ -146,19 +148,20 @@ public class MatchServiceImpl implements IMatchService {
             }
         }
 
+        Long tournamentId = createdGames.get( 0 ).getTournamentId();
         // save new player matches
-        savePlayerMatches( matchesToInsert );
+        savePlayerMatches( matchesToInsert, tournamentId );
         // increase generated_match_counter field by 1
-        tournamentService.increaseGeneratedMatchCounter( createdGames.get( 0 ).getTournamentId() );
+        tournamentService.increaseGeneratedMatchCounter( tournamentId );
 
         // return the response
         List<Player> playerList = playerService.getPlayersByIds( tournamentPlayers );
         return transformer.transform( matchesToInsert, createdGames, playerList );
     }
 
-    private void savePlayerMatches( List<PlayerMatch> matchesToInsert ) {
+    private void savePlayerMatches( List<PlayerMatch> matchesToInsert, Long tournamentId ) {
         for ( PlayerMatch player : matchesToInsert ) {
-            updateOrInsertPlayerMatch( player );
+            updateOrInsertPlayerMatch( player, tournamentId );
         }
     }
 
