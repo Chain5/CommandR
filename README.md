@@ -5,7 +5,7 @@ A service app to create and manage Magic The Gathering tournaments for Commander
 
 # SETUP:
 
-This app needs a postgresql database. You need to init db before running this service in order to execute correctly liquibase script.
+This app has been deployed using Java 11 and needs a postgresql database. You need to init db before running this service in order to execute correctly liquibase script.
 We suggest to install run a docker container of postgresql. Execute the following command to start:
 
 docker run --name commander-postgres -e POSTGRES_PASSWORD=YOUR_PASSWORD -d -p 5432:5432 postgres

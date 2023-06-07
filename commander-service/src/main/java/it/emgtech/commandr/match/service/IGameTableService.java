@@ -10,5 +10,7 @@ public interface IGameTableService {
 
     List<GameTable> getGameTablesByTournamentId( Long tournamentId );
 
-    int resetGameTableForNewMatches(List<Long> gameTables);
+    int resetGameTableForNewMatches( List<Long> gameTables );
+
+    int setGameTableAsFinished( Long id );
 }

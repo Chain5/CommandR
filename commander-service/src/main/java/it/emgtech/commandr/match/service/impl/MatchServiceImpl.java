@@ -1,18 +1,21 @@
 package it.emgtech.commandr.match.service.impl;
 
 import it.emgtech.commandr.exception.ApiRequestException;
+import it.emgtech.commandr.match.model.ApproveMatchRequest;
+import it.emgtech.commandr.match.model.ApproveMatchResponse;
 import it.emgtech.commandr.match.model.GenerateMatchRequest;
 import it.emgtech.commandr.match.model.GetMatchRequest;
 import it.emgtech.commandr.match.model.MatchTransformer;
 import it.emgtech.commandr.match.model.MatchesResponse;
 import it.emgtech.commandr.match.model.PlayerMatchDto;
+import it.emgtech.commandr.match.model.UpdateScoreRequest;
+import it.emgtech.commandr.match.model.UpdateScoreResponse;
 import it.emgtech.commandr.match.model.entity.GameTable;
 import it.emgtech.commandr.match.model.entity.PlayerMatch;
 import it.emgtech.commandr.match.repository.IMatchRepository;
 import it.emgtech.commandr.match.service.IGameTableService;
 import it.emgtech.commandr.match.service.IMatchService;
 import it.emgtech.commandr.player.model.entity.Player;
-import it.emgtech.commandr.player.service.IPlayerService;
 import it.emgtech.commandr.tournament.service.ITournamentScoreBoardService;
 import it.emgtech.commandr.tournament.service.ITournamentService;
 import it.emgtech.commandr.util.JsonConverter;
@@ -27,28 +30,27 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class MatchServiceImpl implements IMatchService {
 
-    // TODO: update -> number of players to start a tournament has to be multiple of four.
-
     private static final Integer MIN_PLAYER_FOR_TOURNAMENT = 4;
     private static final Integer MAX_MATCH_GENERATION = 4;
+    private static final Integer MIN_APPROVED_MATCH = 3;
 
     private final IMatchRepository repository;
     private final IGameTableService gameTableService;
     private final ITournamentScoreBoardService tournamentScoreBoardService;
-    private final IPlayerService playerService;
     private final ITournamentService tournamentService;
     private final MatchTransformer transformer;
 
     @Override
     public MatchesResponse generateMatches( GenerateMatchRequest request ) {
         final Long tournamentId = request.getTournamentId();
-        final List<Long> tournamentPlayerIds = tournamentScoreBoardService.getPlayersByTournamentId( tournamentId );
+        final List<Player> tournamentPlayerIds = tournamentScoreBoardService.getPlayersByTournamentId( tournamentId );
         final List<GameTable> tournamentMatches = gameTableService.getGameTablesByTournamentId( tournamentId );
 
         // Common checks before generating new matches
@@ -76,10 +78,98 @@ public class MatchServiceImpl implements IMatchService {
 
     @Override
     public MatchesResponse getMatches( GetMatchRequest request ) {
-        return null; //TODO: implement
+        List<GameTable> gameTableList = gameTableService.getGameTablesByTournamentId( request.getTournamentId() );
+        if ( gameTableList.isEmpty() ) {
+            throw new ApiRequestException( MessageResponse.NO_GAME_TABLE_FOUND );
+        }
+        return transformer.transform( gameTableList );
     }
 
-    private void commonChecks( List<Long> playerList, List<GameTable> remainingMatches ) {
+    @Override
+    public UpdateScoreResponse updateScore( UpdateScoreRequest request ) {
+        List<GameTable> gameTableList = gameTableService.getGameTablesByTournamentId( request.getTournamentId() );
+
+        if ( gameTableList.isEmpty() ) {
+            throw new ApiRequestException( MessageResponse.NO_GAME_TABLE_FOUND );
+        }
+
+        List<Long> gameTableIds = gameTableList.stream().map( GameTable::getId ).collect( Collectors.toList() );
+        Optional<PlayerMatch> playerMatchOpt = repository.getMatchesByGameTableIdInAndPlayerId( gameTableIds, request.getPlayerId() );
+
+        if ( playerMatchOpt.isEmpty() ) {
+            throw new ApiRequestException( MessageResponse.NO_MATCH_FOUND );
+        }
+
+        PlayerMatch playerMatch = playerMatchOpt.get();
+
+        if ( playerMatch.getGameTable().isFinished() ) {
+            throw new ApiRequestException( MessageResponse.MATCH_IS_FINISHED );
+        }
+
+        playerMatch.setScore( request.getNewScore() );
+        repository.save( playerMatch );
+
+        UpdateScoreResponse response = new UpdateScoreResponse();
+        response.setCode( "OK" );
+        response.setDescription( "Record updated" );
+        return response;
+    }
+
+    @Override
+    public ApproveMatchResponse approveMatch( ApproveMatchRequest request ) {
+        List<GameTable> gameTableList = gameTableService.getGameTablesByTournamentId( request.getTournamentId() );
+
+        if ( gameTableList.isEmpty() ) {
+            throw new ApiRequestException( MessageResponse.NO_GAME_TABLE_FOUND );
+        }
+
+        List<Long> gameTableIds = gameTableList.stream().map( GameTable::getId ).collect( Collectors.toList() );
+        List<PlayerMatch> playerMatchList = repository.getMatchesByGameTableIdIn( gameTableIds );
+
+        if ( playerMatchList.isEmpty() ) {
+            throw new ApiRequestException( MessageResponse.NO_MATCH_FOUND );
+        }
+
+        Optional<PlayerMatch> playerMatchOpt = playerMatchList.stream()
+                .filter( el -> el.getPlayerId().equals( request.getPlayerId() ) )
+                .findFirst();
+
+        if ( playerMatchOpt.isEmpty() ) {
+            throw new ApiRequestException( MessageResponse.NO_MATCH_FOUND );
+        }
+
+        PlayerMatch playerMatch = playerMatchOpt.get();
+
+        if ( playerMatch.getGameTable().isFinished() ) {
+            throw new ApiRequestException( MessageResponse.MATCH_IS_FINISHED );
+        }
+
+        playerMatch.setApprovedScore( request.isApprove() );
+        repository.save( playerMatch );
+
+        int counterApprovedMatches = 0;
+
+        List<PlayerMatch> currentPlayerMatchList = playerMatchList.stream()
+                .filter( table -> table.getGameTable().getTableNumber().equals( playerMatch.getGameTable().getTableNumber() ) )
+                .collect( Collectors.toList() );
+
+        for ( PlayerMatch pm : currentPlayerMatchList ) {
+            if ( pm.isApprovedScore() ) {
+                counterApprovedMatches++;
+            }
+        }
+
+        if ( counterApprovedMatches == MIN_APPROVED_MATCH ) {
+            gameTableService.setGameTableAsFinished( playerMatch.getGameTableId() );
+        }
+
+        ApproveMatchResponse response = new ApproveMatchResponse();
+        response.setCode( "OK" );
+        response.setDescription( "Record updated" );
+        return response;
+    }
+
+    private void commonChecks( List<Player> playerList, List<GameTable> remainingMatches ) {
 
         if ( playerList.isEmpty() ) {
             throw new ApiRequestException( MessageResponse.NO_PLAYER_IN_TOURNAMENT );
@@ -104,9 +194,11 @@ public class MatchServiceImpl implements IMatchService {
         }
     }
 
-    private MatchesResponse generateMatches( Long tournamentId, List<Long> tournamentPlayers, List<GameTable> tournamentMatches ) {
+    private MatchesResponse generateMatches( Long tournamentId, List<Player> tournamentPlayers, List<GameTable> tournamentMatches ) {
         if ( tournamentMatches.isEmpty() ) {
-            // first of all, create new game tables
+            // first of all, set tournament as started...
+            tournamentService.startTournament( tournamentId );
+            // ... and create new game tables
             List<GameTable> createdGames = createNewGameTables( tournamentId, tournamentPlayers.size() );
             return createNewMatches( createdGames, tournamentPlayers, true );
         } else {
@@ -123,12 +215,15 @@ public class MatchServiceImpl implements IMatchService {
         return gameTableService.saveGameTables( tournamentId, numberOfGameTable );
     }
 
-    private MatchesResponse createNewMatches( List<GameTable> createdGames, List<Long> tournamentPlayers, boolean isTournamentJustStarted ) {
+    private MatchesResponse createNewMatches( List<GameTable> createdGames, List<Player> tournamentPlayers, boolean isTournamentJustStarted ) {
         List<PlayerMatch> matchesToInsert = new ArrayList<>();
+        Long tournamentId = createdGames.get( 0 ).getTournamentId();
+
+        List<Player> updatedTournamentPlayers = getCorrectPlayerForTournament( tournamentPlayers, tournamentId );
 
         // Generate a bi-dimensional array of matches
         final Long[][] autogeneratedMatches = isTournamentJustStarted ?
-                generateMatchesFromPlayerList( tournamentPlayers ) :
+                generateMatchesFromPlayerList( updatedTournamentPlayers ) :
                 generateMatchesFromPreviousMatches( createdGames );
 
         // Creating a list of player match to insert
@@ -148,15 +243,21 @@ public class MatchServiceImpl implements IMatchService {
             }
         }
 
-        Long tournamentId = createdGames.get( 0 ).getTournamentId();
         // save new player matches
         savePlayerMatches( matchesToInsert, tournamentId );
         // increase generated_match_counter field by 1
         tournamentService.increaseGeneratedMatchCounter( tournamentId );
 
         // return the response
-        List<Player> playerList = playerService.getPlayersByIds( tournamentPlayers );
-        return transformer.transform( matchesToInsert, createdGames, playerList );
+        return transformer.transform( matchesToInsert, createdGames, updatedTournamentPlayers );
+    }
+
+    private List<Player> getCorrectPlayerForTournament( List<Player> tournamentPlayers, Long tournamentId ) {
+        while ( tournamentPlayers.size() % MIN_PLAYER_FOR_TOURNAMENT != 0 ) {
+            Player player = tournamentPlayers.remove( tournamentPlayers.size() - 1 );
+            tournamentScoreBoardService.unsubscribePlayer( tournamentId, player.getId() );
+        }
+        return tournamentPlayers;
     }
 
     private void savePlayerMatches( List<PlayerMatch> matchesToInsert, Long tournamentId ) {
@@ -165,7 +266,7 @@ public class MatchServiceImpl implements IMatchService {
         }
     }
 
-    private Long[][] generateMatchesFromPlayerList( List<Long> playerIds ) {
+    private Long[][] generateMatchesFromPlayerList( List<Player> playerIds ) {
         Collections.shuffle( playerIds );
         final int playerNumber = playerIds.size();
         int numberOfTables = playerNumber / MIN_PLAYER_FOR_TOURNAMENT; //TODO: better verify the number of tables
@@ -175,7 +276,7 @@ public class MatchServiceImpl implements IMatchService {
         for ( int i = 0; i < numberOfTables; i++ ) {
             for ( int j = 0; j < MIN_PLAYER_FOR_TOURNAMENT; j++ ) {
                 if ( k < playerNumber ) {
-                    tables[i][j] = playerIds.get( k );
+                    tables[i][j] = playerIds.get( k ).getId();
                     k++;
                     continue;
                 }

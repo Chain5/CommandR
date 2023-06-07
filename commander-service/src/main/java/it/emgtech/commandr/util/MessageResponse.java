@@ -11,4 +11,9 @@ public class MessageResponse {
     public static final String NO_PLAYER_FOUND = "No player found.";
     public static final String NICKNAME_ALREADY_IN_USE = "Nickname already in use";
     public static final String NO_SCORE_BOARD_TO_UPDATE = "No score board to update.";
+    public static final String NO_TOURNAMENT_FOUND = "No tournament found.";
+    public static final String TOURNAMENT_ALREADY_STARTED = "You cannot subscribe to this tournament. It's already begun";
+    public static final String NO_GAME_TABLE_FOUND = "No game table found";
+    public static final String NO_MATCH_FOUND = "No match found.";
+    public static final String MATCH_IS_FINISHED = "Match is finished. You can't update match.";
 }

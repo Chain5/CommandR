@@ -12,13 +12,16 @@ import it.emgtech.commandr.tournament.model.SubscribeToTournamentResponse;
 import it.emgtech.commandr.tournament.model.TournamentScoreBoardResponse;
 import it.emgtech.commandr.tournament.model.UpdateScoreBoardRequest;
 import it.emgtech.commandr.tournament.model.UpdateScoreBoardResponse;
+import it.emgtech.commandr.tournament.model.entity.Tournament;
 import it.emgtech.commandr.tournament.model.entity.TournamentScoreBoard;
 import it.emgtech.commandr.tournament.repository.ITournamentScoreBoardRepository;
 import it.emgtech.commandr.tournament.service.ITournamentScoreBoardService;
+import it.emgtech.commandr.tournament.service.ITournamentService;
 import it.emgtech.commandr.util.Mapper;
 import it.emgtech.commandr.util.MessageResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,21 +30,45 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class TournamentScoreBoardServiceImpl implements ITournamentScoreBoardService {
 
     private final Mapper mapper;
     private final ITournamentScoreBoardRepository repository;
+    private final ITournamentService tournamentService;
     private final IPlayerService playerService;
 
     @Override
     public SubscribeToTournamentResponse subscribe( SubscribeToTournamentRequest request ) {
+        Optional<Tournament> tournamentOpt = tournamentService.findTournamentById( request.getTournamentId() );
+
+        if ( tournamentOpt.isEmpty() ) {
+            throw new ApiRequestException( MessageResponse.NO_TOURNAMENT_FOUND );
+        }
+
+        if ( tournamentOpt.get().isStarted() ) {
+            throw new ApiRequestException( MessageResponse.TOURNAMENT_ALREADY_STARTED );
+        }
+
         final TournamentScoreBoard tournamentScoreBoard = new TournamentScoreBoard(
                 null,
                 request.getTournamentId(),
                 request.getPlayerId(),
                 0
         );
+
         return mapper.map( repository.save( tournamentScoreBoard ), SubscribeToTournamentResponse.class );
+    }
+
+    @Override
+    public int unsubscribePlayer( Long tournamentId, Long playerId ) {
+        Optional<Tournament> tournamentOpt = tournamentService.findTournamentById( tournamentId );
+
+        if ( tournamentOpt.isEmpty() ) {
+            throw new ApiRequestException( MessageResponse.NO_TOURNAMENT_FOUND );
+        }
+
+        return repository.deleteTournamentScoreBoardByTournamentIdAndPlayerId( tournamentId, playerId );
     }
 
     @Override
@@ -66,9 +93,9 @@ public class TournamentScoreBoardServiceImpl implements ITournamentScoreBoardSer
     }
 
     @Override
-    public List<Long> getPlayersByTournamentId( Long tournamentId ) {
-        List<TournamentScoreBoard> scoreBoards = repository.getTournamentScoreBoardsByTournamentIdOrderByPlayerTotalScoreDesc( tournamentId );
-        return scoreBoards.stream().map( TournamentScoreBoard::getPlayerId ).collect( Collectors.toList() );
+    public List<Player> getPlayersByTournamentId( Long tournamentId ) {
+        List<TournamentScoreBoard> scoreBoards = repository.getTournamentScoreBoardsByTournamentIdOrderByIdAsc( tournamentId );
+        return scoreBoards.stream().map( TournamentScoreBoard::getPlayer ).collect( Collectors.toList() );
     }
 
 
@@ -104,5 +131,17 @@ public class TournamentScoreBoardServiceImpl implements ITournamentScoreBoardSer
             updatedRecordCounter++;
         }
         return updatedRecordCounter;
+    }
+
+    private void validateRequest( Long tournamentId ) {
+        Optional<Tournament> tournamentOpt = tournamentService.findTournamentById( tournamentId );
+
+        if ( tournamentOpt.isEmpty() ) {
+            throw new ApiRequestException( MessageResponse.NO_TOURNAMENT_FOUND );
+        }
+
+        if ( tournamentOpt.get().isStarted() ) {
+            throw new ApiRequestException( MessageResponse.TOURNAMENT_ALREADY_STARTED );
+        }
     }
 }

@@ -50,7 +50,19 @@ public class TournamentServiceImpl implements ITournamentService {
     }
 
     @Override
-    public Tournament findTournamentById( Long tournamentId ) {
-        return repository.findById( tournamentId ).orElse( null );
+    public Optional<Tournament> findTournamentById( Long tournamentId ) {
+        return repository.findById( tournamentId );
+    }
+
+    @Override
+    public boolean startTournament( Long tournamentId ) {
+        Optional<Tournament> tournamentOpt = repository.findById( tournamentId );
+        if ( tournamentOpt.isEmpty() ) {
+            return false;
+        }
+        Tournament tournament = tournamentOpt.get();
+        tournament.setStarted( true );
+        repository.save( tournament );
+        return true;
     }
 }

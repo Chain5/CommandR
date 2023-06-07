@@ -19,6 +19,7 @@ CREATE TABLE tournament
     start_date              DATE,
     end_date                DATE,
     generated_match_counter INTEGER NOT NULL DEFAULT 0,
+    started                 BOOLEAN NOT NULL DEFAULT FALSE,
     CONSTRAINT tournament_unique UNIQUE (tournament_name)
 );
 
