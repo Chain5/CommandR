@@ -21,7 +21,4 @@ public interface ITournamentScoreBoardService {
     List<Player> getPlayersByTournamentId( Long tournamentId );
 
     UpdateScoreBoardResponse updateScoreBoard( UpdateScoreBoardRequest tournamentId );
-
-    int updateScoreBoard( Long tournamentId, List<PlayerMatchDto> playerMatchDto );
-
 }

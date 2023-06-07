@@ -16,4 +16,5 @@ public class MessageResponse {
     public static final String NO_GAME_TABLE_FOUND = "No game table found";
     public static final String NO_MATCH_FOUND = "No match found.";
     public static final String MATCH_IS_FINISHED = "Match is finished. You can't update match.";
+    public static final String MATCHES_NOT_UPDATED = "You need to update score board before generating other matches";
 }

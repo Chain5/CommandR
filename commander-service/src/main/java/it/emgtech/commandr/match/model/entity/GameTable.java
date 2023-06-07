@@ -1,7 +1,6 @@
 package it.emgtech.commandr.match.model.entity;
 
 import it.emgtech.commandr.tournament.model.entity.Tournament;
-import it.emgtech.commandr.tournament.model.entity.TournamentScoreBoard;
 import lombok.Data;
 
 import javax.persistence.Entity;
@@ -23,6 +22,7 @@ public class GameTable {
     private Long tournamentId;
     private Integer tableNumber;
     private boolean isFinished;
+    private boolean updatedScore;
 
     @ManyToOne ( targetEntity = Tournament.class, fetch = FetchType.EAGER )
     @JoinColumn ( name = "tournamentId", insertable = false, updatable = false )

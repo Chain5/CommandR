@@ -3,6 +3,6 @@ package it.emgtech.commandr.match.model;
 import lombok.Data;
 
 @Data
-public class GetMatchRequest {
+public class GetMatchesRequest {
     private Long tournamentId;
 }

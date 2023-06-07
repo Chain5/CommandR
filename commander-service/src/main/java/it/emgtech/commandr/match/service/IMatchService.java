@@ -3,7 +3,7 @@ package it.emgtech.commandr.match.service;
 import it.emgtech.commandr.match.model.ApproveMatchRequest;
 import it.emgtech.commandr.match.model.ApproveMatchResponse;
 import it.emgtech.commandr.match.model.GenerateMatchRequest;
-import it.emgtech.commandr.match.model.GetMatchRequest;
+import it.emgtech.commandr.match.model.GetMatchesRequest;
 import it.emgtech.commandr.match.model.MatchesResponse;
 import it.emgtech.commandr.match.model.UpdateScoreRequest;
 import it.emgtech.commandr.match.model.UpdateScoreResponse;
@@ -14,7 +14,7 @@ public interface IMatchService {
 
     PlayerMatch updateOrInsertPlayerMatch( PlayerMatch playerMatch, Long tournamentId );
 
-    MatchesResponse getMatches( GetMatchRequest request );
+    MatchesResponse getMatches( GetMatchesRequest request );
 
     UpdateScoreResponse updateScore( UpdateScoreRequest request );
 

@@ -61,4 +61,13 @@ public class GameTableServiceImpl implements IGameTableService {
         repository.save( gameTable );
         return 1;
     }
+
+    @Override
+    public void setUpdatedFlag( Long tournamentId, boolean isUpdated ) {
+        List<GameTable> gameTables = repository.getGameTablesByTournamentId( tournamentId );
+        for ( GameTable gameTable : gameTables ) {
+            gameTable.setUpdatedScore( isUpdated );
+            repository.save( gameTable );
+        }
+    }
 }

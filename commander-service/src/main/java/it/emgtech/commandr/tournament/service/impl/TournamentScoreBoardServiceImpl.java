@@ -3,6 +3,7 @@ package it.emgtech.commandr.tournament.service.impl;
 import it.emgtech.commandr.exception.ApiRequestException;
 import it.emgtech.commandr.match.model.PlayerMatchDto;
 import it.emgtech.commandr.match.model.entity.PlayerMatch;
+import it.emgtech.commandr.match.service.IGameTableService;
 import it.emgtech.commandr.player.model.PlayerResponse;
 import it.emgtech.commandr.player.model.entity.Player;
 import it.emgtech.commandr.player.service.IPlayerService;
@@ -35,6 +36,7 @@ public class TournamentScoreBoardServiceImpl implements ITournamentScoreBoardSer
 
     private final Mapper mapper;
     private final ITournamentScoreBoardRepository repository;
+    private final IGameTableService gameTableService;
     private final ITournamentService tournamentService;
     private final IPlayerService playerService;
 
@@ -74,17 +76,19 @@ public class TournamentScoreBoardServiceImpl implements ITournamentScoreBoardSer
     @Override
     public List<TournamentScoreBoardResponse> getScoreBoard( ScoreBoardRequest request ) {
         List<TournamentScoreBoardResponse> scoreBoardResponses = new ArrayList<>();
-        List<TournamentScoreBoard> scoreBoard = repository.getTournamentScoreBoardsByTournamentIdOrderByPlayerTotalScoreDesc( request.getTournamentId() );
-        List<Player> playerList = playerService.getPlayersByIds(
-                scoreBoard.stream().map( TournamentScoreBoard::getPlayerId ).collect( Collectors.toList() ) );
+        List<TournamentScoreBoard> scoreBoards = repository.getTournamentScoreBoardsByTournamentIdOrderByPlayerTotalScoreDesc( request.getTournamentId() );
 
         int i = 0;
-        for ( TournamentScoreBoard sB : scoreBoard ) {
-            Player p = playerList.get( i );
+        for ( TournamentScoreBoard scoreBoard : scoreBoards ) {
+            Player player = scoreBoard.getPlayer();
             scoreBoardResponses.add( new TournamentScoreBoardResponse(
                     i + 1,
-                    new PlayerResponse( p.getId(), p.getNickname(), p.getFirstName(), p.getLastName() ),
-                    sB.getPlayerTotalScore()
+                    new PlayerResponse(
+                            player.getId(),
+                            player.getNickname(),
+                            player.getFirstName(),
+                            player.getLastName() ),
+                    scoreBoard.getPlayerTotalScore()
             ) );
             i++;
         }
@@ -101,28 +105,24 @@ public class TournamentScoreBoardServiceImpl implements ITournamentScoreBoardSer
 
     @Override
     public UpdateScoreBoardResponse updateScoreBoard( UpdateScoreBoardRequest request ) {
-        List<PlayerMatchDto> playerMatchDto = new ArrayList<>();
+        List<PlayerMatchDto> playerMatchList = new ArrayList<>();
         List<TournamentScoreBoard> scoreBoardList = repository.getTournamentScoreBoardsByTournamentIdOrderByPlayerTotalScoreDesc( request.getTournamentId() );
 
         for ( TournamentScoreBoard tournamentScoreBoard : scoreBoardList ) {
             Player player = tournamentScoreBoard.getPlayer();
             Optional<PlayerMatch> playerMatch = player.getPlayerMatches().stream().filter( el -> el.getGameTable().getTournamentId().equals( request.getTournamentId() ) ).findFirst();
-            playerMatch.ifPresent( match -> playerMatchDto.add( new PlayerMatchDto( match ) ) );
+            playerMatch.ifPresent( match -> playerMatchList.add( new PlayerMatchDto( match ) ) );
         }
 
-        if ( playerMatchDto.isEmpty() ) {
+        if ( playerMatchList.isEmpty() ) {
             throw new ApiRequestException( MessageResponse.NO_SCORE_BOARD_TO_UPDATE );
         }
 
-        //TODO: better response and delete matches (per evitare chiamate continue)
-        updateScoreBoard( request.getTournamentId(), playerMatchDto );
+        internalUpdateScoreBoard( request.getTournamentId(), playerMatchList );
         return new UpdateScoreBoardResponse();
     }
 
-
-    @Override
-    public int updateScoreBoard( Long tournamentId, List<PlayerMatchDto> playerMatchDto ) {
-
+    private int internalUpdateScoreBoard( Long tournamentId, List<PlayerMatchDto> playerMatchDto ) {
         int updatedRecordCounter = 0;
         for ( PlayerMatchDto player : playerMatchDto ) {
             TournamentScoreBoard tournamentScoreBoard = repository.findByTournamentIdAndPlayerId( tournamentId, player.getPlayerId() );
@@ -130,18 +130,8 @@ public class TournamentScoreBoardServiceImpl implements ITournamentScoreBoardSer
             repository.save( tournamentScoreBoard );
             updatedRecordCounter++;
         }
+        gameTableService.setUpdatedFlag( tournamentId, true );
         return updatedRecordCounter;
     }
 
-    private void validateRequest( Long tournamentId ) {
-        Optional<Tournament> tournamentOpt = tournamentService.findTournamentById( tournamentId );
-
-        if ( tournamentOpt.isEmpty() ) {
-            throw new ApiRequestException( MessageResponse.NO_TOURNAMENT_FOUND );
-        }
-
-        if ( tournamentOpt.get().isStarted() ) {
-            throw new ApiRequestException( MessageResponse.TOURNAMENT_ALREADY_STARTED );
-        }
-    }
 }

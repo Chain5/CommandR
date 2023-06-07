@@ -4,7 +4,7 @@ import it.emgtech.commandr.exception.ApiRequestException;
 import it.emgtech.commandr.match.model.ApproveMatchRequest;
 import it.emgtech.commandr.match.model.ApproveMatchResponse;
 import it.emgtech.commandr.match.model.GenerateMatchRequest;
-import it.emgtech.commandr.match.model.GetMatchRequest;
+import it.emgtech.commandr.match.model.GetMatchesRequest;
 import it.emgtech.commandr.match.model.MatchTransformer;
 import it.emgtech.commandr.match.model.MatchesResponse;
 import it.emgtech.commandr.match.model.PlayerMatchDto;
@@ -77,7 +77,7 @@ public class MatchServiceImpl implements IMatchService {
     }
 
     @Override
-    public MatchesResponse getMatches( GetMatchRequest request ) {
+    public MatchesResponse getMatches( GetMatchesRequest request ) {
         List<GameTable> gameTableList = gameTableService.getGameTablesByTournamentId( request.getTournamentId() );
         if ( gameTableList.isEmpty() ) {
             throw new ApiRequestException( MessageResponse.NO_GAME_TABLE_FOUND );
@@ -184,6 +184,11 @@ public class MatchServiceImpl implements IMatchService {
             throw new ApiRequestException( MessageResponse.ALL_MATCHES_NOT_CONCLUDED );
         }
 
+        // TournamentScoreBoard should be updated before generating new matches
+        if ( !remainingMatches.isEmpty() && remainingMatches.stream().anyMatch( el -> !el.isUpdatedScore() ) ) {
+            throw new ApiRequestException( MessageResponse.MATCHES_NOT_UPDATED );
+        }
+
         // Check if exceeding max match generation (should be == tableNumber and 4 in case tableNumber > 4)
         int numberOfTable = remainingMatches.size();
         if ( numberOfTable > 0 ) {
@@ -207,7 +212,6 @@ public class MatchServiceImpl implements IMatchService {
     }
 
     private List<GameTable> createNewGameTables( Long tournamentId, int numberOfPlayers ) {
-        //TODO: controlla il numero dei giocatori (devi escludere eventuali avanzi)
         int numberOfGameTable = numberOfPlayers / MIN_PLAYER_FOR_TOURNAMENT;
         if ( numberOfPlayers % MIN_PLAYER_FOR_TOURNAMENT == 3 ) {
             numberOfGameTable++;
@@ -247,6 +251,8 @@ public class MatchServiceImpl implements IMatchService {
         savePlayerMatches( matchesToInsert, tournamentId );
         // increase generated_match_counter field by 1
         tournamentService.increaseGeneratedMatchCounter( tournamentId );
+        // set isUpdated flag for GameTable as not updated
+        gameTableService.setUpdatedFlag( tournamentId, false );
 
         // return the response
         return transformer.transform( matchesToInsert, createdGames, updatedTournamentPlayers );
@@ -269,7 +275,7 @@ public class MatchServiceImpl implements IMatchService {
     private Long[][] generateMatchesFromPlayerList( List<Player> playerIds ) {
         Collections.shuffle( playerIds );
         final int playerNumber = playerIds.size();
-        int numberOfTables = playerNumber / MIN_PLAYER_FOR_TOURNAMENT; //TODO: better verify the number of tables
+        int numberOfTables = playerNumber / MIN_PLAYER_FOR_TOURNAMENT;
         Long[][] tables = new Long[numberOfTables][MIN_PLAYER_FOR_TOURNAMENT];
 
         int k = 0;
@@ -287,9 +293,7 @@ public class MatchServiceImpl implements IMatchService {
     }
 
     private Long[][] generateMatchesFromPreviousMatches( List<GameTable> gameTables ) {
-
         final List<PlayerMatchDto> playerMatch = retrievePlayerFromGameTable( gameTables );
-        updateTournamentScoreBoard( gameTables.get( 0 ).getTournamentId(), playerMatch );
 
         final int numberOfTables = gameTables.size();
         Long[][] table = new Long[numberOfTables][MIN_PLAYER_FOR_TOURNAMENT];
@@ -322,10 +326,6 @@ public class MatchServiceImpl implements IMatchService {
         gameTableService.resetGameTableForNewMatches( gameTables.stream().map( GameTable::getId ).collect( Collectors.toList() ) );
 
         return table;
-    }
-
-    private void updateTournamentScoreBoard( Long tournamentId, List<PlayerMatchDto> player ) {
-        tournamentScoreBoardService.updateScoreBoard( tournamentId, player );
     }
 
     private List<PlayerMatchDto> retrievePlayerFromGameTable( List<GameTable> gameTables ) {

@@ -13,4 +13,6 @@ public interface IGameTableService {
     int resetGameTableForNewMatches( List<Long> gameTables );
 
     int setGameTableAsFinished( Long id );
+
+    void setUpdatedFlag( Long tournamentId, boolean isUpdated );
 }
