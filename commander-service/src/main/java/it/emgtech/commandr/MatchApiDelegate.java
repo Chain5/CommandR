@@ -1,11 +1,17 @@
 package it.emgtech.commandr;
 
+import it.emgtech.commandr.match.model.ApproveMatchRequest;
+import it.emgtech.commandr.match.model.ApproveMatchResponse;
 import it.emgtech.commandr.match.model.GenerateMatchRequest;
+import it.emgtech.commandr.match.model.GetMatchesRequest;
 import it.emgtech.commandr.match.model.MatchesResponse;
+import it.emgtech.commandr.match.model.UpdateScoreRequest;
+import it.emgtech.commandr.match.model.UpdateScoreResponse;
 import it.emgtech.commandr.match.service.IMatchService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,5 +30,18 @@ public class MatchApiDelegate {
         return ResponseEntity.ok( matchService.generateMatches( request ) );
     }
 
-    //TODO: implement getMatches & getMatchById
+    @GetMapping ( value = "/getMatches" )
+    public ResponseEntity<MatchesResponse> getMatches( @RequestBody GetMatchesRequest request ) {
+        return ResponseEntity.ok( matchService.getMatches( request ) );
+    }
+
+    @PostMapping ( value = "/updateScore" )
+    public ResponseEntity<UpdateScoreResponse> updateScore( @RequestBody UpdateScoreRequest request ) {
+        return ResponseEntity.ok( matchService.updateScore( request ) );
+    }
+
+    @PostMapping ( value = "/approveMatch" )
+    public ResponseEntity<ApproveMatchResponse> approveMatch( @RequestBody ApproveMatchRequest request ) {
+        return ResponseEntity.ok( matchService.approveMatch( request ) );
+    }
 }

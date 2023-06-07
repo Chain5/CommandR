@@ -6,6 +6,8 @@ import it.emgtech.commandr.tournament.model.ScoreBoardRequest;
 import it.emgtech.commandr.tournament.model.SubscribeToTournamentRequest;
 import it.emgtech.commandr.tournament.model.SubscribeToTournamentResponse;
 import it.emgtech.commandr.tournament.model.TournamentScoreBoardResponse;
+import it.emgtech.commandr.tournament.model.UpdateScoreBoardRequest;
+import it.emgtech.commandr.tournament.model.UpdateScoreBoardResponse;
 import it.emgtech.commandr.tournament.service.ITournamentScoreBoardService;
 import it.emgtech.commandr.tournament.service.ITournamentService;
 import lombok.RequiredArgsConstructor;
@@ -41,5 +43,10 @@ public class TournamentApiDelegate {
     @GetMapping ( value = "/getScoreBoard" )
     public ResponseEntity<List<TournamentScoreBoardResponse>> getScoreBoard( @RequestBody ScoreBoardRequest request ) {
         return ResponseEntity.ok( scoreBoardService.getScoreBoard( request ) );
+    }
+
+    @PostMapping ( value = "/updateScoreBoard" )
+    public ResponseEntity<UpdateScoreBoardResponse> updateScoreBoard( @RequestBody UpdateScoreBoardRequest request ) {
+        return ResponseEntity.ok( scoreBoardService.updateScoreBoard( request ) );
     }
 }

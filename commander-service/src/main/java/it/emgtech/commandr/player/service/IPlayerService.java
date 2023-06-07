@@ -1,7 +1,9 @@
 package it.emgtech.commandr.player.service;
 
-import it.emgtech.commandr.player.GetPlayerResponse;
+import it.emgtech.commandr.player.model.GetPlayerResponse;
 import it.emgtech.commandr.player.model.GetPlayerRequest;
+import it.emgtech.commandr.player.model.ModifyPlayerRequest;
+import it.emgtech.commandr.player.model.ModifyPlayerResponse;
 import it.emgtech.commandr.player.model.SavePlayerRequest;
 import it.emgtech.commandr.player.model.SavePlayerResponse;
 import it.emgtech.commandr.player.model.entity.Player;
@@ -14,4 +16,6 @@ public interface IPlayerService {
     GetPlayerResponse getPlayerById( GetPlayerRequest request );
 
     List<Player> getPlayersByIds( List<Long> ids );
+
+    ModifyPlayerResponse modifyPlayer( ModifyPlayerRequest request );
 }

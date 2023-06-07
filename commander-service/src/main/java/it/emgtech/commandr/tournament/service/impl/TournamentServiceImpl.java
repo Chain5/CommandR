@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +33,36 @@ public class TournamentServiceImpl implements ITournamentService {
         // setting id to null: will be set by JPA
         tournament.setId( null );
         tournament.setEndDate( null );
+        tournament.setGeneratedMatchCounter( 0 );
         return mapper.map( repository.save( tournament ), NewTournamentResponse.class );
+    }
+
+    @Override
+    public int increaseGeneratedMatchCounter( Long tournamentId ) {
+        Optional<Tournament> tournamentOpt = repository.findById( tournamentId );
+        if ( tournamentOpt.isEmpty() ) {
+            return -1;
+        }
+        Tournament tournament = tournamentOpt.get();
+        tournament.setGeneratedMatchCounter( tournament.getGeneratedMatchCounter() + 1 );
+        repository.save( tournament );
+        return 1;
+    }
+
+    @Override
+    public Optional<Tournament> findTournamentById( Long tournamentId ) {
+        return repository.findById( tournamentId );
+    }
+
+    @Override
+    public boolean startTournament( Long tournamentId ) {
+        Optional<Tournament> tournamentOpt = repository.findById( tournamentId );
+        if ( tournamentOpt.isEmpty() ) {
+            return false;
+        }
+        Tournament tournament = tournamentOpt.get();
+        tournament.setStarted( true );
+        repository.save( tournament );
+        return true;
     }
 }

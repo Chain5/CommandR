@@ -13,5 +13,7 @@ public interface IPlayerRepository extends JpaRepository<Player, Long> {
 
     Optional<Player> findById( Long id );
 
+    Optional<Player> findByNickname( String nickname );
+
     List<Player> findByIdIn( List<Long> ids );
 }

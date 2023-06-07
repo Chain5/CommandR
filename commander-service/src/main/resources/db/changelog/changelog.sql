@@ -14,10 +14,12 @@ CREATE TABLE player
 -- Tournament Table
 CREATE TABLE tournament
 (
-    id              SERIAL PRIMARY KEY,
-    tournament_name VARCHAR(100) NOT NULL,
-    start_date      DATE,
-    end_date        DATE,
+    id                      SERIAL PRIMARY KEY,
+    tournament_name         VARCHAR(100) NOT NULL,
+    start_date              DATE,
+    end_date                DATE,
+    generated_match_counter INTEGER      NOT NULL DEFAULT 0,
+    started                 BOOLEAN      NOT NULL DEFAULT FALSE,
     CONSTRAINT tournament_unique UNIQUE (tournament_name)
 );
 
@@ -40,6 +42,7 @@ CREATE TABLE game_table
     tournament_id INTEGER REFERENCES tournament (id),
     table_number  INTEGER NOT NULL,
     is_finished   BOOLEAN NOT NULL DEFAULT FALSE,
+    updated_score BOOLEAN NOT NULL DEFAULT FALSE,
     CONSTRAINT game_table_unique UNIQUE (tournament_id, table_number)
 );
 

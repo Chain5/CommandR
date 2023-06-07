@@ -8,5 +8,5 @@ import java.util.List;
 public class MatchResponse {
     private Integer tableNumber;
     private List<PlayerMatchResponse> player;
-    private boolean isScoreApproved;
+    private boolean isFinished;
 }

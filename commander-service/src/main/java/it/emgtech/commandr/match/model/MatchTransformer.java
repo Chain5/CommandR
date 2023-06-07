@@ -21,21 +21,6 @@ public class MatchTransformer {
         return response;
     }
 
-    private List<MatchResponse> buildMatchesFromPlayers( List<PlayerMatch> matchesToInsert, List<GameTable> createdGames, List<Player> playerList ) {
-        List<MatchResponse> response = new ArrayList<>();
-        Map<Long, List<PlayerMatch>> groupedPlayer = matchesToInsert.stream().collect( Collectors.groupingBy( PlayerMatch::getGameTableId ) );
-
-        for ( Map.Entry<Long, List<PlayerMatch>> table : groupedPlayer.entrySet() ) {
-            MatchResponse match = new MatchResponse();
-            match.setScoreApproved( false );
-            Optional<Integer> tableNumberOpt = createdGames.stream().filter( t -> t.getId().equals( table.getKey() ) ).map( GameTable::getTableNumber ).findFirst();
-            match.setTableNumber( tableNumberOpt.orElse( -1 ) );
-            match.setPlayer( transform( table.getValue(), playerList ) );
-            response.add( match );
-        }
-        return response;
-    }
-
     public List<PlayerMatchResponse> transform( List<PlayerMatch> playerMatches, List<Player> playerList ) {
         List<PlayerMatchResponse> responses = new ArrayList<>();
         for ( PlayerMatch player : playerMatches ) {
@@ -55,5 +40,46 @@ public class MatchTransformer {
             responses.add( playerResponse );
         }
         return responses;
+    }
+
+    public MatchesResponse transform( List<GameTable> gameTableList ) {
+        MatchesResponse response = new MatchesResponse();
+        response.setTournamentId( gameTableList.get( 0 ).getTournamentId() );
+        response.setMatches( buildMatchesFromPlayers( gameTableList ) );
+        return response;
+    }
+
+    private List<MatchResponse> buildMatchesFromPlayers( List<PlayerMatch> matchesToInsert, List<GameTable> createdGames, List<Player> playerList ) {
+        List<MatchResponse> response = new ArrayList<>();
+        Map<Long, List<PlayerMatch>> groupedPlayer = matchesToInsert.stream().collect( Collectors.groupingBy( PlayerMatch::getGameTableId ) );
+
+        for ( Map.Entry<Long, List<PlayerMatch>> table : groupedPlayer.entrySet() ) {
+            MatchResponse match = new MatchResponse();
+            match.setFinished( false );
+            Optional<Integer> tableNumberOpt = createdGames.stream().filter( t -> t.getId().equals( table.getKey() ) ).map( GameTable::getTableNumber ).findFirst();
+            match.setTableNumber( tableNumberOpt.orElse( -1 ) );
+            match.setPlayer( transform( table.getValue(), playerList ) );
+            response.add( match );
+        }
+        return response;
+    }
+
+    private List<MatchResponse> buildMatchesFromPlayers( List<GameTable> gameTableList ) {
+        List<MatchResponse> response = new ArrayList<>();
+
+        for ( GameTable gameTable : gameTableList ) {
+            MatchResponse match = new MatchResponse();
+            match.setFinished( gameTable.isFinished() );
+            match.setTableNumber( gameTable.getTableNumber() );
+            List<Player> playerList = new ArrayList<>();
+            List<PlayerMatch> playerMatches = gameTable.getPlayerMatches();
+            for ( PlayerMatch playerMatch : playerMatches ) {
+                playerList.add( playerMatch.getPlayer() );
+            }
+            match.setPlayer( transform( gameTable.getPlayerMatches(), playerList ) );
+            response.add( match );
+        }
+
+        return response;
     }
 }

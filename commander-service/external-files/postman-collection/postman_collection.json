@@ -1,8 +1,9 @@
 {
 	"info": {
-		"_postman_id": "b7659c71-3c6c-44a9-b47c-6f34b7c9c8f1",
+		"_postman_id": "c4d80f0d-5a4e-42f5-9fbf-48259b5ccb50",
 		"name": "CommandR",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "19032117"
 	},
 	"item": [
 		{
@@ -153,6 +154,93 @@
 					"path": [
 						"tournament",
 						"new"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "updateScoreBoard",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"tournamentId\": 1\n}"
+				},
+				"url": {
+					"raw": "localhost:8080/tournament/updateScoreBoard",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"tournament",
+						"updateScoreBoard"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "approveMatch",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"tournamentId\": 1,\n    \"playerId\": 1,\n    \"approve\": true\n}"
+				},
+				"url": {
+					"raw": "localhost:8080/match/approveMatch",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"match",
+						"approveMatch"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "updateScore",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"tournamentId\": 1,\n    \"playerId\": 1,\n    \"newScore\": 0\n}"
+				},
+				"url": {
+					"raw": "localhost:8080/match/updateScore",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"match",
+						"updateScore"
 					]
 				}
 			},

@@ -1,4 +1,4 @@
-package it.emgtech.commandr.player;
+package it.emgtech.commandr.player.model;
 
 import lombok.Data;
 
