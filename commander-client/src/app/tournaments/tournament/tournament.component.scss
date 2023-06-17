@@ -1,0 +1,29 @@
+.parent-container {
+    margin-bottom: 20px;
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .container {
+    white-space: nowrap;
+    margin-left: 0;
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+  .inbl {
+    display: inline-block;
+    vertical-align: top;
+    overflow: auto;
+    height: 100%;
+    max-width: 350%;
+  }
+  .text-truncate-over800 {
+    min-width: 2px;
+    width: unset;
+  }
+  
+  @media only screen and (max-width: 767px) {
+    .inbl {
+        display: none !important;
+    }
+  }
+  

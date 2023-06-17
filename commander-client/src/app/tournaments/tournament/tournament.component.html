@@ -1,0 +1,28 @@
+<div class="parent-container card card-horizontal bg-dark" routerLink="/tournaments/{{tournament.id}}">
+    <div class="container col-md-3 img-square-wrapper">
+        <div class="inbl card-body cardPadding fadeshow1">
+
+            <!-- Name -->
+            <div class="row">
+                <div class="col-2 text-truncate text-truncate-over800">
+                    <h5 class="card-title text-light">{{ tournament.title }}</h5>
+                </div>
+            </div>
+
+            <!-- Date -->
+            <div class="row">
+                <div class="col-2 text-truncate text-light text-truncate-over800" >
+                    {{ tournament.creationDate }}
+                </div>
+            </div>
+
+            <!-- Is Started -->
+            <div class="row">
+                <div class="col-2 text-truncate text-light text-truncate-over800" >
+                    {{ tournament.isStarted }}
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+  

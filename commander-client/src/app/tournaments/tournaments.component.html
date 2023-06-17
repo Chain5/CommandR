@@ -1,0 +1,18 @@
+<div class="row">
+    <div class="col-xs-12" style="padding-bottom: 20px;">
+      <button class="btn btn-success" style="float: right" (click)="goToCreate()">Crea Torneo</button>
+    </div>
+    <div class="col-xs-12">
+      <app-tournament  *ngFor="let tournamentEl of sortByDate(); let i = index"
+      [tournament]="tournamentEl" [index] = i></app-tournament>
+      <div *ngIf="tournaments.length < 1">
+        <div class="parent-container card bg-dark">
+          <div class="row no-gutters card-body cardPadding fadeshow1">
+            <h1 class="col-auto" style="color: white">Nessun Torneo Disponibile</h1>
+            <h3 lass="col-auto" style="color: white">Per crearne uno clicca sul pulsante in alto 'Crea Torneo'</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
