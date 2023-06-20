@@ -20,6 +20,10 @@
     min-width: 2px;
     width: unset;
   }
+  .disable-click {
+    pointer-events: none;
+    cursor: default;
+  }
   
   @media only screen and (max-width: 767px) {
     .inbl {

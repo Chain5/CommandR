@@ -19,7 +19,8 @@ export class TournamentsComponent implements OnInit {
     // this.tournamentService.getTournaments().subscribe( ( data : Tournament[] ) => {
     //   this.tournaments = data;
     // } );
-    this.tournaments = [];
+    var t = new Tournament(1, 'Torneo di prova', new Date(), false, false);
+    this.tournaments = [t];
   }
 
   public goToCreate() {

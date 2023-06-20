@@ -19,7 +19,9 @@
             <!-- Is Started -->
             <div class="row">
                 <div class="col-2 text-truncate text-light text-truncate-over800" >
-                    {{ tournament.isStarted }}
+                    <button class="btn btn-success disable-click"  *ngIf="!tournament.isStarted" >NUOVO</button>
+                    <button class="btn btn-warning disable-click"  *ngIf="tournament.isStarted && !tournament.isFinished" >IN CORSO</button>
+                    <button class="btn btn-danger disable-click" *ngIf="tournament.isFinished" >TERMINATO</button>
                 </div>
             </div>
         </div>
