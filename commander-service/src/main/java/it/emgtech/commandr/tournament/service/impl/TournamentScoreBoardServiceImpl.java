@@ -38,7 +38,6 @@ public class TournamentScoreBoardServiceImpl implements ITournamentScoreBoardSer
     private final ITournamentScoreBoardRepository repository;
     private final IGameTableService gameTableService;
     private final ITournamentService tournamentService;
-    private final IPlayerService playerService;
 
     @Override
     public SubscribeToTournamentResponse subscribe( SubscribeToTournamentRequest request ) {

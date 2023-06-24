@@ -14,6 +14,8 @@ import { HeaderComponent } from './header/header.component';
 import { SpinnerComponent } from './spinner/spinner.component';
 import { LoadingInterceptor } from './loading/loading.interceptor';
 import { TournamentComponent } from './tournaments/tournament/tournament.component';
+import { TournamentDetailComponent } from './tournaments/tournament/tournament-detail/tournament-detail.component';
+import { NewTournamentComponent } from './tournaments/new-tournament/new-tournament.component';
 
 
 @NgModule({
@@ -22,7 +24,9 @@ import { TournamentComponent } from './tournaments/tournament/tournament.compone
     TournamentsComponent,
     HeaderComponent,
     SpinnerComponent,
-    TournamentComponent
+    TournamentComponent,
+    TournamentDetailComponent,
+    NewTournamentComponent
   ],
   imports: [
     BrowserModule,

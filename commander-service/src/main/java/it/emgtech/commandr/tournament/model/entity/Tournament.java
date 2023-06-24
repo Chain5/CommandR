@@ -22,6 +22,7 @@ public class Tournament {
     private LocalDate endDate;
     private Integer generatedMatchCounter;
     private boolean started;
+    private boolean finished;
 
     @OneToMany ( mappedBy = "tournament" )
     private List<TournamentScoreBoard> tournamentScoreBoards;

@@ -1,6 +1,7 @@
 package it.emgtech.commandr.tournament.service.impl;
 
 import it.emgtech.commandr.exception.ApiRequestException;
+import it.emgtech.commandr.tournament.model.GetTournamentsResponse;
 import it.emgtech.commandr.tournament.model.NewTournamentRequest;
 import it.emgtech.commandr.tournament.model.NewTournamentResponse;
 import it.emgtech.commandr.tournament.model.entity.Tournament;
@@ -13,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -21,6 +24,21 @@ public class TournamentServiceImpl implements ITournamentService {
 
     private final Mapper mapper;
     private final ITournamentRepository repository;
+
+
+
+    @Override
+    public List<GetTournamentsResponse> getTournaments( boolean getOnlyNewTournaments ) {
+        List<Tournament> tournaments;
+
+        if( getOnlyNewTournaments ) {
+            tournaments = repository.getTournamentsByStartedAndFinished(false, false);
+        } else {
+            tournaments = repository.findAll();
+        }
+
+        return buildResponse(tournaments);
+    }
 
     @Override
     public NewTournamentResponse save( NewTournamentRequest tournamentRequest ) {
@@ -64,5 +82,19 @@ public class TournamentServiceImpl implements ITournamentService {
         tournament.setStarted( true );
         repository.save( tournament );
         return true;
+    }
+
+    private List<GetTournamentsResponse> buildResponse( List<Tournament> tournaments ) {
+        List<GetTournamentsResponse> responses = new ArrayList<>();
+
+        for ( Tournament tournament : tournaments ) {
+            GetTournamentsResponse response = mapper.map( tournament, GetTournamentsResponse.class );
+
+            if(tournament.getTournamentScoreBoards() != null && !tournament.getTournamentScoreBoards().isEmpty() ) {
+                response.setSubscribedPlayerCounter( tournament.getTournamentScoreBoards().size() );
+            }
+            responses.add( response );
+        }
+        return responses;
     }
 }

@@ -1,6 +1,7 @@
 <div class="row">
     <div class="col-xs-12" style="padding-bottom: 20px;">
-      <button class="btn btn-success" style="float: right" (click)="goToCreate()">Crea Torneo</button>
+      <button class="btn btn-warning" style="float: right;" (click)="goToCreatePlayer()">Crea Giocatore</button>
+      <button class="btn btn-success" style="float: right; margin-right: 1%;" (click)="goToCreateTournament()">Crea Torneo</button>
     </div>
     <div class="col-xs-12">
       <app-tournament  *ngFor="let tournamentEl of sortByDate(); let i = index"

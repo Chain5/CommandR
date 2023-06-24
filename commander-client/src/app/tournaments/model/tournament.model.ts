@@ -1,18 +1,20 @@
 
 export class Tournament {
   public id;
-  public title: string = '';
-  public creationDate: Date = new Date();
-  public isStarted: boolean = false;
-  public isFinished: boolean = false;
+  public tournamentName: string = '';
+  public startDate: Date = new Date();
+  public started: boolean = false;
+  public finished: boolean = false;
+  public subscribedPlayerCounter: number = 0;
 
 
-  constructor( id: number | undefined, title: string, creationDate: Date, isStarted: boolean, isFinished: boolean ) {
+  constructor( id: number | undefined, tournamentName: string, startDate: Date, started: boolean, finished: boolean, subscribedPlayerCounter: number ) {
     this.id = id;
-    this.title = title;
-    this.creationDate = creationDate;
-    this.isStarted = isStarted;
-    this.isFinished = isFinished;
+    this.tournamentName = tournamentName;
+    this.startDate = startDate;
+    this.started = started;
+    this.finished = finished;
+    this.subscribedPlayerCounter = subscribedPlayerCounter;
   }
 
 
@@ -23,7 +25,8 @@ export class Tournament {
       '',
       new Date(),
       false,
-      false
+      false,
+      0
     )
   }
 

@@ -7,16 +7,30 @@ import { Tournament } from "../model/tournament.model";
 @Injectable()
 export class TournamentService {
 
-  private mainUrl: String = environment.serverUrl + 'tournament/';
+  private mainUrl: String = environment.serverUrl + '/tournament';
 
   constructor(private http: HttpClient, private datePipe: DatePipe) {}
 
   tournamentSelected = new EventEmitter<Tournament>();
 
   getTournaments() {
-    let url = this.mainUrl+"get";
+    let url = this.mainUrl+"/get";
+    let params = new HttpParams().set("getOnlyNewTournaments", false);
 
-    return this.http.get<Tournament[]>(url, {
+    return this.http.get<Tournament[]>(url,
+    {
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      responseType: 'json',
+      params: params
+    });
+  }
+
+  getTournament(index: string) {
+    let url = this.mainUrl+"get/"+index;
+
+    return this.http.get<Tournament>(url, {
       headers: {
         'Content-Type': 'application/json'
       },

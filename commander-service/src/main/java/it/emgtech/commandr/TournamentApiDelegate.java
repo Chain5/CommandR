@@ -1,5 +1,6 @@
 package it.emgtech.commandr;
 
+import it.emgtech.commandr.tournament.model.GetTournamentsResponse;
 import it.emgtech.commandr.tournament.model.NewTournamentRequest;
 import it.emgtech.commandr.tournament.model.NewTournamentResponse;
 import it.emgtech.commandr.tournament.model.ScoreBoardRequest;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -29,6 +31,11 @@ public class TournamentApiDelegate {
 
     private final ITournamentService service;
     private final ITournamentScoreBoardService scoreBoardService;
+
+    @GetMapping ( value = "/get" )
+    public ResponseEntity<List<GetTournamentsResponse>> getTournaments( @RequestParam (value = "getOnlyNewTournaments" ) boolean getOnlyNewTournaments ) {
+        return ResponseEntity.ok( service.getTournaments( getOnlyNewTournaments ) );
+    }
 
     @PostMapping ( value = "/new" )
     public ResponseEntity<NewTournamentResponse> saveNewTournament( @RequestBody NewTournamentRequest request ) {
