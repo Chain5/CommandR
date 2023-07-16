@@ -1,7 +1,11 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { TournamentService } from './service/tournament.service';
 import { Tournament } from './model/tournament.model';
+import { NewTournamentComponent } from './new-tournament/new-tournament.component';
+import { NewPlayerComponent } from '../players/new-player/new-player.component';
+import { relative } from 'path';
 
 @Component({
   selector: 'app-tournaments',
@@ -12,7 +16,7 @@ export class TournamentsComponent implements OnInit {
 
   tournaments: Tournament[] = [];
 
-  constructor(private router: Router, private tournamentService: TournamentService) { }
+  constructor(private router: Router, private tournamentService: TournamentService, private matDialog: MatDialog) { }
 
   ngOnInit(): void {
     this.tournamentService.getTournaments()
@@ -26,13 +30,24 @@ export class TournamentsComponent implements OnInit {
   }
 
   public goToCreateTournament() {
-    const navigationDetails: string[] = ['/create-torunament/'];
-    //this.router.navigate(navigationDetails); TODO: to implement
+
+    const dialogRef =
+    this.matDialog.open( NewTournamentComponent, {
+      height: '400px',
+      width: '400px'
+    })
+    .afterClosed()
+    .subscribe(() => {
+      //TODO: better solution -> pass a variable from dialog after his call to service
+        window.location.reload()
+    });
   }
 
   public goToCreatePlayer() {
-    const navigationDetails: string[] = ['/create-torunament/'];
-    //this.router.navigate(navigationDetails); TODO: to implement
+    this.matDialog.open( NewPlayerComponent, {
+      height: '400px',
+      width: '400px'
+    });
   }
 
   sortByDate() {

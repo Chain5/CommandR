@@ -1,1 +1,13 @@
-<p>new-tournament works!</p>
+<div >
+  <form [formGroup]="creationForm" (ngSubmit)="onSend()">
+    <h2 matDialogTitle>Crea Nuovo Torneo</h2>
+        <input  matInput type="text" placeholder="Nome Torneo" formControlName="tournamentName" required >
+        <br>
+        <input matInput type="date" placeholder="Data" formControlName="startDate" required>
+        <br>
+    <mat-dialog-actions class="right">
+      <button class="btn" (click)="closeMe()">Annulla</button>
+      <button class="btn btn-success" type="submit" [disabled]="!creationForm.valid" mat-button>Crea</button>
+  </mat-dialog-actions>
+  </form>
+</div>

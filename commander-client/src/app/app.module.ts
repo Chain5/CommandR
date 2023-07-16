@@ -16,6 +16,8 @@ import { LoadingInterceptor } from './loading/loading.interceptor';
 import { TournamentComponent } from './tournaments/tournament/tournament.component';
 import { TournamentDetailComponent } from './tournaments/tournament/tournament-detail/tournament-detail.component';
 import { NewTournamentComponent } from './tournaments/new-tournament/new-tournament.component';
+import { NewPlayerComponent } from './players/new-player/new-player.component';
+import { PlayerService } from './tournaments/service/player.service';
 
 
 @NgModule({
@@ -26,7 +28,8 @@ import { NewTournamentComponent } from './tournaments/new-tournament/new-tournam
     SpinnerComponent,
     TournamentComponent,
     TournamentDetailComponent,
-    NewTournamentComponent
+    NewTournamentComponent,
+    NewPlayerComponent
   ],
   imports: [
     BrowserModule,
@@ -39,6 +42,7 @@ import { NewTournamentComponent } from './tournaments/new-tournament/new-tournam
   ],
   providers: [
     TournamentService,
+    PlayerService,
     { provide: LocationStrategy, useClass: HashLocationStrategy },
     { provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi:true },
     DatePipe

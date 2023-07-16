@@ -28,7 +28,7 @@ export class TournamentService {
   }
 
   getTournament(index: string) {
-    let url = this.mainUrl+"get/"+index;
+    let url = this.mainUrl+"/get/"+index;
 
     return this.http.get<Tournament>(url, {
       headers: {
@@ -36,6 +36,15 @@ export class TournamentService {
       },
       responseType: 'json'
     });
+  }
+
+  newTournament(tournament: Tournament) {
+    let url = this.mainUrl+"/new";
+
+    return this.http.post<any>(
+      url, tournament, {
+        responseType: 'json'
+      });
   }
 
 }
